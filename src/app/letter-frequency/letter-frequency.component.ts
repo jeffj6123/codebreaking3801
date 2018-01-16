@@ -38,7 +38,7 @@ export class LetterFrequencyComponent implements OnInit, OnChanges {
   generateGraphs(){
     var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
 
-    var alphabet = this.utils.alphabet.toUpperCase().split(',');
+    var alphabet = this.utils.alphabet;
 
     var LetterFrequencyData = [];
     var standardLetterFrequencyData = [];

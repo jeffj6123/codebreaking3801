@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class UtilsService {
 
-  alphabet = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z';
+  alphabet = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z'.toUpperCase().split(',');
   standard_letter_frequency = `A,.08167
 B,.01492
 C,.02782
@@ -35,9 +35,15 @@ Z,.00074`;
   constructor() {}
 
 
-  public generateStandardLetterFrequencyDict(standard_letter_frequency){
+  /**
+   * generates a dictionary of letter, frequency pairs which sum to 1,
+   * where the format is character,frequency \n
+   * @param standardLetterFrequency
+   * @returns {{}}
+   */
+  public generateStandardLetterFrequencyDict(standardLetterFrequency){
 
-    var list = standard_letter_frequency.split('\n');
+    var list = standardLetterFrequency.split('\n');
     var dict = {};
     for(var i = 0; i < list.length; i++){
       var splitString = list[i].split(',');
@@ -47,16 +53,27 @@ Z,.00074`;
     return dict;
   };
 
+  /**
+   * generate a dictionary where each key is a character from the alphabet with a default value of 0.
+   * @param alphabet
+   * @returns {{}}
+   */
   public generateLetterDictionary(alphabet){
-    var alphabetList = alphabet.toUpperCase().split(',');
     var emptyLetterDict = {};
-    for(var i = 0; i < alphabetList.length; i++){
-      emptyLetterDict[alphabetList[i]] = 0;
+    for(var i = 0; i < alphabet.length; i++){
+      emptyLetterDict[alphabet[i]] = 0;
     }
     return emptyLetterDict
   };
 
-  public generateLetterFrequencyDictionary(text, alphabet = this.alphabet){
+  /**
+   * generates a dictionary of letter frequency counts from a text from an approved
+   * list of characters with the default being english alphabet
+   * @param text
+   * @param alphabet
+   * @returns {{}}
+   */
+  public generateLetterCountDictionary(text, alphabet = this.alphabet){
     var lettersCountDict = this.generateLetterDictionary(alphabet);
     for(var i = 0; i < text.length; i++){
       var char = text.charAt(i).toUpperCase();
@@ -67,6 +84,11 @@ Z,.00074`;
     return lettersCountDict;
   };
 
+  /**
+   * Generates a sum from a dictionary of just key : number
+   * @param dict
+   * @returns {number}
+   */
   public countDict(dict){
     var count = 0;
     for(let key in dict){
@@ -75,8 +97,15 @@ Z,.00074`;
     return count;
   }
 
-  public generateOrderedLetterFrequencyList(text, alphabet) {
-    var lettersCountDict = this.generateLetterFrequencyDictionary(text, alphabet);
+  /**
+   * Generates an ordered(decreasing frequency) letter frequency list, which sums to 1 of given text of the
+   * characters in the alphabet with the default being the standard english alphabet.
+   * @param text
+   * @param alphabet
+   * @returns {Array}
+   */
+  public generateOrderedLetterFrequencyList(text, alphabet = this.alphabet) {
+    var lettersCountDict = this.generateLetterCountDictionary(text, alphabet);
 
     var orderedList = [];
 
@@ -97,7 +126,6 @@ Z,.00074`;
     for(var i =0; i < nSizes.length; i++){
       nGrams.push({size: nSizes[i], grams:{}, mostFrequent : null})
     }
-
     var textLength = text.length;
 
     for(i = 0; i < textLength; i++){
@@ -110,7 +138,6 @@ Z,.00074`;
           }else{
             nGrams[j].grams[g] = 1
           }
-
           //if set check, otherwise initialize
           if(nGrams[j].mostFrequent){
             if(nGrams[j].grams[g] > nGrams[j].grams[nGrams[j].mostFrequent]){
@@ -128,8 +155,13 @@ Z,.00074`;
     return nGrams
   }
 
-  public generateTransFormDictionary(listOfLetterKeys){
-
+  /**
+   * stripes whitespace and new line characters
+   * @param text
+   * @returns {string}
+   */
+  public stripWhiteSpaceAndFormatting(text){
+    return text.replace(/\W+/g, "").trim();
   }
 
 }

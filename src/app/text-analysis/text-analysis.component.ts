@@ -47,7 +47,7 @@ export class TextAnalysisComponent implements OnInit {
       }
 
       //replaceText
-      var replaceText = char
+      var replaceText = char;
       if(highlight){
         replaceText = "<span class='highlight-text'>" + char + '</span>';
       }
@@ -59,19 +59,20 @@ export class TextAnalysisComponent implements OnInit {
 
     }
 
-    nonFormattedReplacedText = nonFormattedReplacedText.replace(/\W+/g, "");
+    nonFormattedReplacedText = this.utils.stripWhiteSpaceAndFormatting(nonFormattedReplacedText);
 
-    nonFormattedReplacedText = nonFormattedReplacedText.trim();
+    this.nGrams = this.generateSortedNgraphsLists(nonFormattedReplacedText, [2,3]);
 
-    var nGramsList = this.utils.generateNGramDictionary(nonFormattedReplacedText,[2,3]);
+  }
 
+  generateSortedNgraphsLists(text, ngraphSizes){
+    var nGraphLists = this.utils.generateNGramDictionary(text,ngraphSizes);
+    var sortedNGraphs = [];
 
-    var nGrams = [];
-
-    for(var i = 0; i < nGramsList.length; i++){
-      var g = {name : nGramsList[i].size, entries : [] };
-      for(var key in nGramsList[i].grams){
-        g.entries.push({name : key, frequency : (nGramsList[i].grams[key] /  nGramsList[i].grams[nGramsList[i].mostFrequent]).toPrecision(3)} )
+    for(var i = 0; i < nGraphLists.length; i++){
+      var g = {name : nGraphLists[i].size, entries : [] };
+      for(var key in nGraphLists[i].grams){
+        g.entries.push({name : key, frequency : (nGraphLists[i].grams[key] /  nGraphLists[i].grams[nGraphLists[i].mostFrequent]).toPrecision(3)} )
       }
 
       g.entries.sort(function (a,b) {
@@ -79,37 +80,30 @@ export class TextAnalysisComponent implements OnInit {
       });
       g.entries = g.entries.splice(0,25);
       for(var j = 0; j < g.entries.length; j++){
-        var reverseKey = g.entries[j].name.split("").reverse().join("");
-        var reverse = nGramsList[i].grams[reverseKey] ? nGramsList[i].grams[reverseKey] : 0;
+        var reverseKey = g.entries[j].name.split("").reverse().join(""); //man I hate this
+        var reverse = nGraphLists[i].grams[reverseKey] ? nGraphLists[i].grams[reverseKey] : 0;
         g.entries[j].reverseKey = reverseKey;
-        g.entries[j].reverseFrequency = (reverse /  nGramsList[i].grams[nGramsList[i].mostFrequent]).toPrecision(3);
+        g.entries[j].reverseFrequency = (reverse /  nGraphLists[i].grams[nGraphLists[i].mostFrequent]).toPrecision(3);
 
       }
-
-
-      nGrams.push(g);
+      sortedNGraphs.push(g);
     }
-    this.nGrams = nGrams;
-
+    return sortedNGraphs;
   }
 
   public analyize(){
-
     this.replacedText = '';
 
     var copyText = this.text;
 
     //remove white space
-    copyText = copyText.replace(/\W+/g, "");
-
-    copyText = copyText.trim();
-
+    copyText = this.utils.stripWhiteSpaceAndFormatting(copyText);
     copyText = copyText.toUpperCase();
 
-    var letterFrequencyDict = this.utils.generateLetterFrequencyDictionary(copyText);
+    var letterFrequencyDict = this.utils.generateLetterCountDictionary(copyText);
 
     var sum = this.utils.countDict(letterFrequencyDict);
-    var alphabet = this.utils.alphabet.toUpperCase().split(',');
+    var alphabet = this.utils.alphabet;
     //generate letters data and normalized letter frequency dict and transformKeyList
     this.transformKey = [];
     this.lettersData = [];
@@ -117,44 +111,16 @@ export class TextAnalysisComponent implements OnInit {
     for(var i = 0; i < alphabet.length; i++){
       this.normalizedLetterFrequencyDict[alphabet[i]] = letterFrequencyDict[alphabet[i]] / sum;
       this.lettersData.push({letter : alphabet[i], frequency : letterFrequencyDict[alphabet[i]] / sum, count: letterFrequencyDict[alphabet[i]] })
-
       this.transformKey.push({letter: alphabet[i], replacementLetter : alphabet[i], hightlight : false})
     }
-
 
 
     this.lettersData.sort(function (a,b) {
       return a.count > b.count ? -1 : 1
     });
 
-    var nGramsList = this.utils.generateNGramDictionary(copyText,[2,3]);
 
-
-    var nGrams = [];
-
-    for(var i = 0; i < nGramsList.length; i++){
-      var g = {name : nGramsList[i].size, entries : [] };
-      for(var key in nGramsList[i].grams){
-        g.entries.push({name : key, frequency : (nGramsList[i].grams[key] /  nGramsList[i].grams[nGramsList[i].mostFrequent]).toPrecision(3)} )
-      }
-
-      g.entries.sort(function (a,b) {
-        return a.frequency > b.frequency ? -1 : 1
-      });
-      g.entries = g.entries.splice(0,25);
-      for(var j = 0; j < g.entries.length; j++){
-        var reverseKey = g.entries[j].name.split("").reverse().join("");
-        var reverse = nGramsList[i].grams[reverseKey] ? nGramsList[i].grams[reverseKey] : 0;
-        g.entries[j].reverseKey = reverseKey;
-        g.entries[j].reverseFrequency = (reverse /  nGramsList[i].grams[nGramsList[i].mostFrequent]).toPrecision(3);
-
-      }
-
-
-      nGrams.push(g);
-    }
-
-    this.nGrams = nGrams;
+    this.nGrams = this.generateSortedNgraphsLists(copyText, [2,3]);
   }
 
 }

@@ -31,10 +31,10 @@ export class ShiftCypherComponent {
       copyText = copyText.replace(/ /g,'')
     }
 
-    var letterFrequencyDict = this.utils.generateLetterFrequencyDictionary(copyText);
+    var letterFrequencyDict = this.utils.generateLetterCountDictionary(copyText);
 
     var sum = this.utils.countDict(letterFrequencyDict);
-    var alphabet = this.utils.alphabet.toUpperCase().split(',');
+    var alphabet = this.utils.alphabet;
 
 
     this.lettersData = [];
