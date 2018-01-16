@@ -84,7 +84,7 @@
                 <tr>
                   <th>letter</th>
                   <th>replacement</th>
-                  <th>highlight</th>
+                  <!--<th>highlight</th>-->
                 </tr>
                 </thead>
                 <tbody>
@@ -94,10 +94,13 @@
                     <span *ngIf="letter.letter != letter.replacementLetter">
                         <i class="material-icons">done</i>
                     </span>
+                      <span *ngIf="duplicateTransform(letter)">
+                            <i class="material-icons">report_problem</i>
+                      </span>
                     </td>
-                  <td *ngIf="normalizedLetterFrequencyDict[letter.letter] > 0">
-                    <input  [(ngModel)]="letter.highlight"  class="no-margin-check form-check-input" type="checkbox" value="">
-                  </td>
+                  <!--<td *ngIf="normalizedLetterFrequencyDict[letter.letter] > 0">-->
+                    <!--<input  [(ngModel)]="letter.highlight"  class="no-margin-check form-check-input" type="checkbox" value="">-->
+                  <!--</td>-->
                 </tr>
                 </tbody>
               </table>
@@ -110,8 +113,14 @@
   <div class="card content" *ngIf="replacedText.length > 0">
     <div class="card-body">
       <h3>Replaced Text</h3>
+      <div>
+        highlight
+        <input [(ngModel)]="highlightKeys" type="text">
+        <button (click)="highlightText()" type="button" class=" text-center btn btn-outline-primary">highlight</button>
+
+      </div>
       <!--<textarea [(ngModel)]="replacedText" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>-->
-      <div [innerHTML]="replacedText"></div>
+      <div [innerHTML]="highLightedText"></div>
     </div>
   </div>
 

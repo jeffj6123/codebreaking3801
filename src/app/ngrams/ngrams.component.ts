@@ -25,8 +25,8 @@ export class NgramsComponent implements OnInit {
     copyText = copyText.replace(/\r?\n?/g, '');
     copyText = copyText.trim();
 
-    var nGramsList = this.utils.generateNGramDictionary(copyText,[2,3]);
-
+    // var nGramsList = this.utils.generateNGramDictionary(copyText,[2,3]);
+    var nGramsList = [];
 
     this.nGrams = [];
 
