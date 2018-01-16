@@ -1,1 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+
+.table td, .table th {
+  padding: .25rem;
+  font-size: smaller;
+
+}
+
+.list-group-item {
+  padding: .25rem;
+  font-size: smaller;
+}
+
+body {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#356aa0+0,225b66+100 */
+  background: #009688; /* Old browsers */
+  background: -moz-linear-gradient(top,  #009688 0%, #225b66 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #009688 0%,#225b66 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #009688 0%,#225b66 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#356aa0', endColorstr='#225b66',GradientType=0 ); /* IE6-9 */
+
+  height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+  background-position: 0 0;
+}
+
+.content{
+  margin-top: 15px;
+}
+
+textarea {
+  outline: none;
+}
+
+.highlight-text {
+  background-color: #FFFF00;
+}
+
+.no-margin-check{
+  margin-left: 0px;
+}

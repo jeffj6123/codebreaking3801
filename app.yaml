@@ -1,0 +1,47 @@
+# [START runtime]
+runtime: python27
+threadsafe: yes
+# [END runtime]
+
+handlers:
+
+- url: /(.*\.woff)
+  mime_type: application/x-font-woff
+  static_files: dist/\1
+  upload: dist/(.*\.woff)
+
+- url: /(.*\.woff2)
+  mime_type: font/woff2
+  static_files: dist/\1
+  upload: dist/(.*\.woff2)
+
+- url: /favicon.ico
+  static_files: dist/favicon.ico
+  upload: dist/favicon.ico
+
+- url: /(.*\.(gif|png|jpg)(|\.map))$
+  static_files: dist/\1
+  upload: dist/(.*)(|\.map)
+
+- url: /dist
+  static_dir: dist
+
+- url: /.*
+  static_files: index.html
+  upload: index.html
+
+# Temporary setting to keep gcloud from uploading not required files for deployment
+skip_files:
+- ^node_modules$
+- ^app\.yaml
+- ^README\..*
+- \.gitignore
+- ^\.git$
+- ^grunt\.js
+- ^src$
+- ^e2e$
+- \.editorconfig
+- ^karma\.config\.js
+- ^package\.json
+- ^protractor\.conf\.js
+- ^tslint\.json

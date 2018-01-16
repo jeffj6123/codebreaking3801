@@ -1,0 +1,119 @@
+<div class="container">
+  <div class="card content">
+    <div class="card-body">
+      <div class=" row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <h2 class="text-center">Text</h2>
+            <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+          </div>
+          <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+        </div>
+        <div class="col-sm-8">
+          <app-letter-frequency [letterFrequencyDict]="normalizedLetterFrequencyDict"></app-letter-frequency>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card content" *ngIf="lettersData.length > 0">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-3">
+          <h3 class="text-center"> Most Frequent letters</h3>
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>letter</th>
+              <th>frequency</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let letter of lettersData">
+              <td>{{ letter.letter }}</td>
+              <td>{{letter.count}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-sm-3">
+          <h3 class="text-center"> Most Frequent digrams</h3>
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>digraph</th>
+              <th>relative frequency</th>
+              <th>reverse frequency</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let gram of nGrams[0].entries">
+              <td>{{ gram.name }}</td>
+              <td>{{gram.frequency}}</td>
+              <td>{{gram.reverseFrequency}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-sm-3">
+          <h3 class="text-center"> Most Frequent trigraphs</h3>
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>trigraph</th>
+              <th>relative frequency</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let gram of nGrams[1].entries">
+              <td>{{ gram.name }}</td>
+              <td>{{gram.frequency}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-sm-3">
+          <h3>Replacement</h3>
+          <button (click)="replace()" type="button" class=" text-center btn btn-outline-primary">replace</button>
+
+          <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th>letter</th>
+                  <th>replacement</th>
+                  <th>highlight</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let letter of transformKey">
+                    <td *ngIf="normalizedLetterFrequencyDict[letter.letter] > 0">{{letter.letter}}</td>
+                    <td *ngIf="normalizedLetterFrequencyDict[letter.letter] > 0"><input [(ngModel)]="letter.replacementLetter" type="text" minlength="1" maxlength="1" size="1">
+                    <span *ngIf="letter.letter != letter.replacementLetter">
+                        <i class="material-icons">done</i>
+                    </span>
+                    </td>
+                  <td *ngIf="normalizedLetterFrequencyDict[letter.letter] > 0">
+                    <input  [(ngModel)]="letter.highlight"  class="no-margin-check form-check-input" type="checkbox" value="">
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card content" *ngIf="replacedText.length > 0">
+    <div class="card-body">
+      <h3>Replaced Text</h3>
+      <!--<textarea [(ngModel)]="replacedText" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>-->
+      <div [innerHTML]="replacedText"></div>
+    </div>
+  </div>
+
+
+</div>
