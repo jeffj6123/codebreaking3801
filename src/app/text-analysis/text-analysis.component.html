@@ -110,6 +110,27 @@
     </div>
   </div>
 
+  <div class="card content" *ngIf="lettersData.length > 0">
+    <h3>Letter matrix
+      <button type="button" class=" text-center btn btn-outline-primary">{{ true ? 'show' : 'hide' }}</button>
+    </h3>
+    <table class="table table-bordered letter-matrix text-center">
+      <thead>
+      <tr>
+        <th></th>
+        <th *ngFor="let letter of lettersData">{{letter.letter}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr></tr>
+      <tr *ngFor="let letter of lettersData; let i = index">
+        <td>{{letter.letter}}</td>
+        <td *ngFor="let subLetter of lettersData">{{completeDigraphDict[letter.letter + subLetter.letter.toUpperCase()] || '0' }}  </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="card content" *ngIf="replacedText.length > 0">
     <div class="card-body">
       <h3>Replaced Text</h3>

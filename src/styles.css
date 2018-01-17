@@ -1,14 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
 .table td, .table th {
-  padding: .25rem;
-  font-size: smaller;
+  padding: .1rem;
+  font-size: small;
 
 }
 
 .list-group-item {
   padding: .25rem;
-  font-size: smaller;
+  font-size: small;
 }
 
 body {
@@ -41,3 +41,17 @@ textarea {
 .no-margin-check{
   margin-left: 0px;
 }
+
+.letter-matrix{
+  table-layout: fixed;
+}
+
+.letter-matrix-cell{
+  padding: .1em;
+
+}
+
+.letter-matrix-diagonal{
+  background-color: #009688;
+}
+

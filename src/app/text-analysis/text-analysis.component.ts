@@ -16,6 +16,8 @@ export class TextAnalysisComponent implements OnInit {
 
   normalizedLetterFrequencyDict = {};
 
+  completeDigraphDict = {};
+
   lettersData = [];
 
   nGrams = [];
@@ -52,7 +54,7 @@ export class TextAnalysisComponent implements OnInit {
 
     }
 
-    this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
+    // this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
 
     this.nGrams = this.generateSortedNgraphsLists(this.replacedText, [2,3]);
 
@@ -100,6 +102,8 @@ export class TextAnalysisComponent implements OnInit {
   generateSortedNgraphsLists(text, ngraphSizes){
     var nGraphLists = this.utils.generateNGramDictionary(text,ngraphSizes);
     var sortedNGraphs = [];
+
+    this.completeDigraphDict = nGraphLists[0].grams;
 
     for(var i = 0; i < nGraphLists.length; i++){
       var g = {name : nGraphLists[i].size, entries : [] };

@@ -22,7 +22,7 @@ export class Ngraph {
 class NgraphFactory {
 
   constructor(text: string, sizes: number[]){
-    var nGraphLists = UtilsService.generateNGramDictionary(text,sizes);
+    var nGraphLists =[]  //UtilsService.generateNGramDictionary(text,sizes);
     var sortedNGraphs = [];
 
     for(var i = 0; i < nGraphLists.length; i++){
