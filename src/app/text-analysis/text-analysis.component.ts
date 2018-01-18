@@ -25,6 +25,7 @@ export class TextAnalysisComponent implements OnInit {
    nGraphs: list of n-graph data, currently only has digraph and trigraph data
    transformKey: list of objects with letter, transformkey letter pairs
    */
+  normalizedLetterFrequencyDict = {};
   completeDigraphDict = {};
   lettersData = [];
   nGraphs = [];
@@ -92,7 +93,7 @@ export class TextAnalysisComponent implements OnInit {
       return a.length > b.length ? -1 : 1;
     });
     //First change the keywords to now be a string with words separated with | per reg exp
-    let keywords = keywordsSplit.join('|').toUpperCase();
+    let keywords = keywordsSplit.join('|');
 
     //For every match found replace with a highlighted version
     return text.replace(new RegExp(keywords, "g"), function myFunction(x) {
@@ -170,10 +171,12 @@ export class TextAnalysisComponent implements OnInit {
 
     var sum = this.utils.countDict(letterFrequencyDict);
     var alphabet = this.utils.alphabet;
+    this.normalizedLetterFrequencyDict = {};
     //generate letters data and normalized letter frequency dict and transformKeyList
     this.transformKey = [];
     this.lettersData = [];
     for(var i = 0; i < alphabet.length; i++){
+      this.normalizedLetterFrequencyDict[alphabet[i]] = letterFrequencyDict[alphabet[i]] / sum;
       this.lettersData.push({letter : alphabet[i], frequency : (letterFrequencyDict[alphabet[i]] / sum).toPrecision(3), count: letterFrequencyDict[alphabet[i]] })
 
       if(letterFrequencyDict[alphabet[i]] > 0){
