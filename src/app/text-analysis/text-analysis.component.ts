@@ -54,7 +54,7 @@ export class TextAnalysisComponent implements OnInit {
 
     }
 
-    // this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
+    this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
 
     this.nGrams = this.generateSortedNgraphsLists(this.replacedText, [2,3]);
 
@@ -165,4 +165,7 @@ export class TextAnalysisComponent implements OnInit {
     this.nGrams = this.generateSortedNgraphsLists(copyText, [2,3]);
   }
 
+  public isTransformDifferent(letter){
+    return letter.letter != letter.replacementLetter ? letter.replacementLetter : ' ';
+  }
 }
