@@ -40,6 +40,7 @@ textarea {
 
 .no-margin-check{
   margin-left: 0px;
+  margin-right: 0px;
 }
 
 .letter-matrix{
@@ -55,3 +56,6 @@ textarea {
   background-color: #009688;
 }
 
+.times {
+  font-family: "Times New Roman", Times, serif;
+}

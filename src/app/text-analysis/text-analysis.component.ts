@@ -165,4 +165,7 @@ export class TextAnalysisComponent implements OnInit {
     this.nGrams = this.generateSortedNgraphsLists(copyText, [2,3]);
   }
 
+  public isTransformDifferent(letter){
+    return letter.letter != letter.replacementLetter ? letter.replacementLetter : ' ';
+  }
 }
