@@ -8,6 +8,8 @@
             <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
           </div>
           <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+          <button (click)="showReplaceKey = !showReplaceKey" type="button" class=" text-center btn btn-outline-primary">{{showReplaceKey ? 'hide' : 'show'}} replaced key</button>
+
         </div>
         <div class="col-sm-8">
           <app-letter-frequency [letterFrequencyDict]="normalizedLetterFrequencyDict"></app-letter-frequency>
@@ -31,7 +33,7 @@
             <tbody>
             <tr *ngFor="let letter of lettersData">
               <td>{{ letter.letter }}</td>
-              <td>{{letter.count}}</td>
+              <td>{{letter.count}} ( {{letter.frequency}})</td>
             </tr>
             </tbody>
           </table>
@@ -133,30 +135,40 @@
 
   <div class="card content" *ngIf="replacedText.length > 0">
     <div class="card-body">
+      <div *ngIf="showReplaceKey">
+        <h4>Replaced key</h4>
+        <table class="table table-bordered letter-matrix text-center">
+          <thead>
+          <tr>
+            <th *ngFor="let letter of transformKey">{{letter.letter}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td *ngFor="let letter of transformKey">{{ letter.letter != letter.replacementLetter ?  letter.replacementLetter : ' ' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
       <h3>Replaced Text</h3>
+
       <div>
         highlight
         <input [(ngModel)]="highlightKeys" type="text">
         <button (click)="highlightText()" type="button" class=" text-center btn btn-outline-primary">highlight</button>
       </div>
-      <div>
-        <table class="table table-bordered">
-          <thead>
-          <tr>
-            <th *ngFor="let letter of lettersData">{{letter.letter}}</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td *ngFor="let letter of lettersData">{{ isTransformDifferent(letter) }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-      <!--<textarea [(ngModel)]="replacedText" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>-->
+
       <div [innerHTML]="highLightedText"></div>
     </div>
   </div>
 
+  <!--<div class="card content" >-->
+    <!--<div class="card-body">-->
+      <!--<h3>FAQ : </h3>-->
 
+      <!--<b>Highlight : </b>-->
+      <!--<p>Highlight will take a comma separated string, i.e test,t,w and highlight any of thing that matches.</p>-->
+
+    <!--</div>-->
+  <!--</div>-->
 </div>

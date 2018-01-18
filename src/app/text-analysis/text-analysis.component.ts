@@ -19,10 +19,10 @@ export class TextAnalysisComponent implements OnInit {
   completeDigraphDict = {};
 
   lettersData = [];
-
   nGrams = [];
-
   transformKey = [];
+
+  showReplaceKey = true;
 
   constructor(private utils: UtilsService) {
   }
@@ -79,10 +79,8 @@ export class TextAnalysisComponent implements OnInit {
     //First change the keywords to now be a string with words separated with | per reg exp
     let keywords = keywordsSplit.join('|').toUpperCase();
 
-    console.log(text)
-    console.log(keywords)
     //For every match found replace with a highlighted version
-    return text.replace(new RegExp(keywords, "gi"), function myFunction(x) {
+    return text.replace(new RegExp(keywords, "g"), function myFunction(x) {
       return "<span class='highlight-text'>" + x + "</span>";
     })
   }
@@ -149,7 +147,7 @@ export class TextAnalysisComponent implements OnInit {
     this.normalizedLetterFrequencyDict = {};
     for(var i = 0; i < alphabet.length; i++){
       this.normalizedLetterFrequencyDict[alphabet[i]] = letterFrequencyDict[alphabet[i]] / sum;
-      this.lettersData.push({letter : alphabet[i], frequency : letterFrequencyDict[alphabet[i]] / sum, count: letterFrequencyDict[alphabet[i]] })
+      this.lettersData.push({letter : alphabet[i], frequency : (letterFrequencyDict[alphabet[i]] / sum).toPrecision(3), count: letterFrequencyDict[alphabet[i]] })
 
       if(letterFrequencyDict[alphabet[i]] > 0){
         this.transformKey.push({letter: alphabet[i], replacementLetter : alphabet[i]})
@@ -166,6 +164,7 @@ export class TextAnalysisComponent implements OnInit {
   }
 
   public isTransformDifferent(letter){
+    console.log(letter)
     return letter.letter != letter.replacementLetter ? letter.replacementLetter : ' ';
   }
 }
