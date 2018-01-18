@@ -39,7 +39,7 @@ export class TextAnalysisComponent implements OnInit {
     //replace text is for what is displayed
     this.replacedText = '';
 
-    //nonformattedReplacedText is for determing
+    //nonformattedReplacedText is for determining
     var nonFormattedReplacedText = '';
 
     for(var j = 0; j < this.text.length; j++){
@@ -54,7 +54,7 @@ export class TextAnalysisComponent implements OnInit {
 
     }
 
-    // this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
+    this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
 
     this.nGrams = this.generateSortedNgraphsLists(this.replacedText, [2,3]);
 
