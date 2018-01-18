@@ -6,12 +6,15 @@ import {UtilsService} from "../utils.service";
   templateUrl: './letter-frequency.component.html',
   styleUrls: ['./letter-frequency.component.css']
 })
+/*
+  Generates a barChart to display letter frequency side by side with standard letter frequency
+
+  letterFrequencyDict should be a dict of  { letter : percentage freq  }
+ */
 export class LetterFrequencyComponent implements OnInit, OnChanges {
 
   @Input()
   letterFrequencyDict;
-
-
 
   barChartOptions:any = {
     scaleShowVerticalLines: false,

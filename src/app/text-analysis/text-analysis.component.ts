@@ -8,20 +8,31 @@ import {UtilsService} from "../utils.service";
 })
 export class TextAnalysisComponent implements OnInit {
 
+  /*
+  text: the text given by the user - avoid changing it
+  replacedText: text generated after replacing characters from the text
+  highLightedText: the actual text displayed at the bottom of the screen as html
+  highlightKeys: comma separated text from the user used to know what to highlight
+   */
   text = '';
   replacedText = '';
   highLightedText = '';
-
   highlightKeys = '';
 
-  normalizedLetterFrequencyDict = {};
-
+  /*
+   completeDigraphDict: consider removing - would be used for letter matrix
+   lettersData: letter frequency string for displaying the letter frequency table
+   nGraphs: list of n-graph data, currently only has digraph and trigraph data
+   transformKey: list of objects with letter, transformkey letter pairs
+   */
   completeDigraphDict = {};
-
   lettersData = [];
-  nGrams = [];
+  nGraphs = [];
   transformKey = [];
 
+  /*
+  showReplaceKey used for knowing current state of hiding the replaceKey
+   */
   showReplaceKey = true;
 
   constructor(private utils: UtilsService) {
@@ -30,7 +41,14 @@ export class TextAnalysisComponent implements OnInit {
   }
 
 
+  /*
+  1. generates a replaceKeyDict which says which particular letters need to be replaced
+  2. using this.text, goes through by character and see if it exists in the replaceKeyDict and if so  replaces in new text
+  3. generate new n-graphs from the replaced text
+  4. hightlight the text
+   */
   public replace(){
+    //1
     var replaceKeyDict = {};
     for(var i =0; i < this.transformKey.length; i++){
       replaceKeyDict[this.transformKey[i].letter] = this.transformKey[i].replacementLetter;
@@ -39,9 +57,7 @@ export class TextAnalysisComponent implements OnInit {
     //replace text is for what is displayed
     this.replacedText = '';
 
-    //nonformattedReplacedText is for determining
-    var nonFormattedReplacedText = '';
-
+    //2
     for(var j = 0; j < this.text.length; j++){
       var char = this.text.charAt(j).toUpperCase();
 
@@ -55,14 +71,13 @@ export class TextAnalysisComponent implements OnInit {
     }
 
     this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.replacedText);
-
-    this.nGrams = this.generateSortedNgraphsLists(this.replacedText, [2,3]);
-
+    //3
+    this.nGraphs = this.generateSortedNgraphsLists(this.replacedText, [2,3]);
+    //4
     this.highlightText();
   }
 
   public highlightText(){
-    console.log(this.replacedText)
     this.highLightedText = this.highlight(this.replacedText);
   }
 
@@ -88,23 +103,31 @@ export class TextAnalysisComponent implements OnInit {
   duplicateTransform(letterTransform){
     for(var i = 0; i < this.transformKey.length; i++){
       if(this.transformKey[i].replacementLetter == letterTransform.replacementLetter && this.transformKey[i].letter != letterTransform.letter){
-        console.log(letterTransform)
-        console.log(this.transformKey[i])
         return true;
       }
-
     }
     return false;
   }
 
+  /**
+   * generates nGraphs of the sizes passed in into a list of ngraphs with sorted lists of entries
+   *
+   * @param text
+   * @param ngraphSizes
+   * @returns {Array}
+   */
   generateSortedNgraphsLists(text, ngraphSizes){
     var nGraphLists = this.utils.generateNGramDictionary(text,ngraphSizes);
     var sortedNGraphs = [];
 
+    //assuming the first one is a size 2
     this.completeDigraphDict = nGraphLists[0].grams;
 
+    //iterate through ngraphs given back
     for(var i = 0; i < nGraphLists.length; i++){
+      //generate ngraph object
       var g = {name : nGraphLists[i].size, entries : [] };
+      //create and sort list of all of the ngraph dict
       for(var key in nGraphLists[i].grams){
         g.entries.push({name : key, frequency : (nGraphLists[i].grams[key] /  nGraphLists[i].grams[nGraphLists[i].mostFrequent]).toPrecision(3)} )
       }
@@ -112,7 +135,10 @@ export class TextAnalysisComponent implements OnInit {
       g.entries.sort(function (a,b) {
         return a.frequency > b.frequency ? -1 : 1
       });
+      //take top 25 entries
       g.entries = g.entries.splice(0,25);
+
+      //grab the reverse values
       for(var j = 0; j < g.entries.length; j++){
         var reverseKey = g.entries[j].name.split("").reverse().join(""); //man I hate this
         var reverse = nGraphLists[i].grams[reverseKey] ? nGraphLists[i].grams[reverseKey] : 0;
@@ -125,6 +151,9 @@ export class TextAnalysisComponent implements OnInit {
     return sortedNGraphs;
   }
 
+  /**
+   *
+   */
   public analyize(){
     var copyText = this.text;
 
@@ -144,9 +173,7 @@ export class TextAnalysisComponent implements OnInit {
     //generate letters data and normalized letter frequency dict and transformKeyList
     this.transformKey = [];
     this.lettersData = [];
-    this.normalizedLetterFrequencyDict = {};
     for(var i = 0; i < alphabet.length; i++){
-      this.normalizedLetterFrequencyDict[alphabet[i]] = letterFrequencyDict[alphabet[i]] / sum;
       this.lettersData.push({letter : alphabet[i], frequency : (letterFrequencyDict[alphabet[i]] / sum).toPrecision(3), count: letterFrequencyDict[alphabet[i]] })
 
       if(letterFrequencyDict[alphabet[i]] > 0){
@@ -160,11 +187,7 @@ export class TextAnalysisComponent implements OnInit {
     });
 
 
-    this.nGrams = this.generateSortedNgraphsLists(copyText, [2,3]);
+    this.nGraphs = this.generateSortedNgraphsLists(copyText, [2,3]);
   }
 
-  public isTransformDifferent(letter){
-    console.log(letter)
-    return letter.letter != letter.replacementLetter ? letter.replacementLetter : ' ';
-  }
 }
