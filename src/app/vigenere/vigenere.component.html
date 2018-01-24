@@ -1,0 +1,27 @@
+<div class="container no-margin-check times">
+  <div class="card content">
+    <div class="card-body">
+      <div class=" row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <h2 class="text-center">Text</h2>
+            <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+          </div>
+          <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card content" *ngIf="replacedText.length > 0">
+    <div class="card-body">
+      <h3>Replaced Text</h3>
+      <div>
+        highlight
+        <input [(ngModel)]="highlightKeys" type="text">
+        <button (click)="highlightText()" type="button" class=" text-center btn btn-outline-primary">highlight</button>
+      </div>
+      <div [innerHTML]="highLightedText"></div>
+    </div>
+  </div>
+</div>
