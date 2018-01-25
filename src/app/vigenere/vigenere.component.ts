@@ -134,6 +134,15 @@ export class VigenereComponent implements OnInit {
       frequencies.push(normalizedFrequencies)
     }
 
+    var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
+    var alphabet = this.utils.alphabet;
+    var standardLetterFrequencyData = [];
+    for(var i = 0; i < alphabet.length; i++){
+      standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
+    }
+
+    this.autoFit(frequencies[0],standardLetterFrequencyData);
+
     return frequencies;
   }
 
@@ -198,7 +207,37 @@ export class VigenereComponent implements OnInit {
       sequenceLengths[i].grams = validRepeatedSequences;
     }
     console.log(validRepeatedSequences)
+
     return sequenceLengths
-}
+  }
+
+
+  rotate(arr, n) {
+  var L = arr.length;
+  return arr.slice(L - n).concat(arr.slice(0, L - n));
+  };
+
+  autoFit(frequency, reference){
+    var lowestIndex = 0;
+    var indexValue = 1000;
+
+    var arr = [].concat(frequency);
+
+    for(var j = 0; j < frequency.length; j++){
+      var value = 0;
+      for(var i = 0; i < frequency.length; i++){
+        value += Math.abs(frequency[i] - reference[i]);
+      }
+      console.log(arr)
+      if(value < indexValue){
+        lowestIndex = j;
+        indexValue = value
+      }
+
+      arr = this.rotate(arr, 1)
+    }
+
+    console.log(lowestIndex)
+  }
 
 }
