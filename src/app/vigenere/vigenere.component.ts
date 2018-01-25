@@ -10,8 +10,13 @@ export class VigenereComponent implements OnInit {
   /*
    text: the text given by the user - avoid changing it
    replacedText: text generated after replacing characters from the text
-   highLightedText: the actual text displayed at the bottom of the screen as html
-   highlightKeys: comma separated text from the user used to know what to highlight
+   highLightedText: the actual text displayed to the right of the screen as html
+   keyLength: currently selected keylength guess
+   factors: list of numbers which is from minFactor(inclusive) to maxFactor(inclusive)
+   frequencies: list of lists(since only strings of length are checked for spacing its effectively just a reference in the way currently) containing frequencies of letters for each index of the key
+   shiftIndexes: keeps track of how shifted each index is and what letter that gives for the key
+   sequences: all of the sequences found in the string
+   currentlyHighLightedIndex: keeps track of which index of the key is currently meant to be highlighted
    */
   text = '';
   replacedText = '';
@@ -25,8 +30,12 @@ export class VigenereComponent implements OnInit {
   sequences = [];
   currentlyHighlightedIndex = 0;
 
+  /*
+  showKey : knows if formmatting or key should be shown
+   keySizeBlocks
+   highlighting
+   */
   showKey = true;
-
   keySizeBlocks = true;
   highlighting = true;
 
@@ -71,6 +80,13 @@ export class VigenereComponent implements OnInit {
 
   }
 
+  /**
+   * takes in a character, letter and a number, shift and will shift the character by that much in either direction
+   * NOTE: returns as an uppercase character
+   * @param letter
+   * @param shift
+   * @returns {string}
+   */
   shiftLetter(letter, shift){
     letter = letter.toUpperCase();
     var letterCode = letter.charCodeAt(0);
@@ -84,23 +100,44 @@ export class VigenereComponent implements OnInit {
     return String.fromCharCode(letterCode);
   }
 
+  /**
+   * takes in an amount to shift by and what offset from 0. I.E if shifting every 3rd character starting at the 2nd char
+   * in the string. this manipulates replacedText and then calls groupText to update highlightedText to display the changes
+   * @param shift
+   * @param offset
+   */
   shiftText(shift, offset){
 
+    //turn into a list because its easier to iterate over and change every nth element
     var splitS = this.replacedText.split('');
 
     for (var i = offset; i < splitS.length-1; i+=this.keyLength) {
       splitS[i] = this.shiftLetter(splitS[i], shift);
     }
+    //turn back into a string
     this.replacedText = splitS.join("");
 
     this.groupText();
   }
 
+  /**
+   * meant to be called in the html and correspond with the < > arrow keys for rotating that frequency list by count
+   * @param index
+   * @param count
+   */
   shiftFrequnecy(index, count) {
+    //change highlightedIndex
     this.currentlyHighlightedIndex = index;
+
+    //call shift text to update the characters of this index
     this.shiftText(-1 * count, index);
+
+    //keep track of this info
     this.shiftIndexes[index].shift += count;
     this.shiftIndexes[index].currentChar = this.shiftLetter(this.shiftIndexes[index].currentChar, count);
+
+    //now here we need to make a new array of the rotated frequency list by count and reassign to this.frequencies
+    //because it is an input for the letter-frequency component and the only way for it to know a change happened is when a memory location of a property changes of the object
     var arr = [].concat(this.frequencies[index]);
     count -= arr.length * Math.floor(count / arr.length);
     arr.push.apply(arr, arr.splice(0, count));
@@ -108,7 +145,17 @@ export class VigenereComponent implements OnInit {
     this.frequencies[index] = arr;
   }
 
+  /**
+   * This is responsible for taking the text and parsing it into multiple strings for each index of the key and then
+   * generating the letter frequency for each string and then flattening that into a ordered letter frequency array.
+   * It also initializes the shiftIndexes, which keep track of how much you have rotated the arrays
+   *
+   * ALSO if not commented out will initialize the positions of the shift indexes in an attempt to help you solve it
+   * @param text
+   * @returns {Array}
+   */
   public generateNthFrequencies(text){
+    //initialize book keeping
     this.shiftIndexes = [];
     var frequencies = [];
     var modStrings = [];
@@ -116,6 +163,7 @@ export class VigenereComponent implements OnInit {
       modStrings.push('');
       this.shiftIndexes.push({currentChar : 'A', shift : 0});
     }
+    //split the text into multiple strings for each index of the key
     var alphabet = this.utils.alphabet;
     for(var i = 0; i < text.length; i++) {
       var mod = i % this.keyLength;
@@ -123,6 +171,7 @@ export class VigenereComponent implements OnInit {
 
     }
 
+    //now generate frequences for each index into a list
     for(var x = 0; x < modStrings.length; x++){
       var normalizedFrequencies = [];
       var letterFrequencyDict = this.utils.generateLetterCountDictionary(modStrings[x]);
@@ -134,21 +183,31 @@ export class VigenereComponent implements OnInit {
       frequencies.push(normalizedFrequencies)
     }
 
-    var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
-    var alphabet = this.utils.alphabet;
-    var standardLetterFrequencyData = [];
-    for(var i = 0; i < alphabet.length; i++){
-      standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
-    }
 
-    for(var i = 0; i < frequencies.length; i++){
-      var shift = this.autoFit(frequencies[i],standardLetterFrequencyData);
-      this.shiftFrequnecy(i, shift )
-    }
+    //comment out if you dont want it to attempt to auto solve it for you.
+        //get a list of standard letter frequency
+        var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
+        var alphabet = this.utils.alphabet;
+        var standardLetterFrequencyData = [];
+        for(var i = 0; i < alphabet.length; i++){
+          standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
+        }
+        //go through and let auto fit make its best guess and then shift that index of the key to its guess
+        for(var i = 0; i < frequencies.length; i++){
+          var shift = this.autoFit(frequencies[i],standardLetterFrequencyData);
+          this.shiftFrequnecy(i, shift )
+        }
+        //end auto solve
 
     return frequencies;
   }
 
+  /**
+   *
+   * @param text
+   * @param sizes
+   * @returns {Array}
+   */
   generateRepeatedSequenceDistances(text, sizes: any[]){
   var sequenceLengths = [];
   for(var i =0; i < sizes.length; i++){
