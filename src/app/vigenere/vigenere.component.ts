@@ -67,7 +67,7 @@ export class VigenereComponent implements OnInit {
       }
         text = newText
       }
-    this.highLightedText = text;
+    this.highLightedText = "<div class='replaced-text'>" + text + "</div>";
 
   }
 
@@ -141,7 +141,10 @@ export class VigenereComponent implements OnInit {
       standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
     }
 
-    this.autoFit(frequencies[0],standardLetterFrequencyData);
+    for(var i = 0; i < frequencies.length; i++){
+      var shift = this.autoFit(frequencies[i],standardLetterFrequencyData);
+      this.shiftFrequnecy(i, shift )
+    }
 
     return frequencies;
   }
@@ -212,10 +215,11 @@ export class VigenereComponent implements OnInit {
   }
 
 
-  rotate(arr, n) {
-  var L = arr.length;
-  return arr.slice(L - n).concat(arr.slice(0, L - n));
-  };
+  arrayRotate(arr, count) {
+    count -= arr.length * Math.floor(count / arr.length)
+    arr.push.apply(arr, arr.splice(0, count))
+    return arr
+  }
 
   autoFit(frequency, reference){
     var lowestIndex = 0;
@@ -226,18 +230,18 @@ export class VigenereComponent implements OnInit {
     for(var j = 0; j < frequency.length; j++){
       var value = 0;
       for(var i = 0; i < frequency.length; i++){
-        value += Math.abs(frequency[i] - reference[i]);
+        value += Math.abs(arr[i] - reference[i]);
+        //console.log(arr[i].toString() + ' ' + reference[i] +  ' ' + value)
       }
-      console.log(arr)
       if(value < indexValue){
         lowestIndex = j;
         indexValue = value
       }
 
-      arr = this.rotate(arr, 1)
+      arr = this.arrayRotate(arr, 1)
     }
-
-    console.log(lowestIndex)
+    console.log( String.fromCharCode(65 + lowestIndex));
+    return lowestIndex;
   }
 
 }

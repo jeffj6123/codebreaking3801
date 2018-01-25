@@ -59,3 +59,31 @@ textarea {
 .times {
   font-family: "Times New Roman", Times, serif;
 }
+
+.overflowtext {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+}
+
+
+.replaced-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: smaller;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+@media (min-width: 1200px) {
+  .container{
+    max-width: 1400px;
+  }
+}
+
+.inline-label {
+  position: relative;
+  top: 5px;
+  width: 70px;
+}

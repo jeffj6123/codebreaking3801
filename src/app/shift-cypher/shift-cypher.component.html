@@ -9,9 +9,8 @@
             <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
           </div>
           <div class="input-group">
-            <label>Amount of text to shift : {{charactersToShowPercentage * 100}}%</label>
-            <input [(ngModel)]="charactersToShowPercentage" type="range" min="0" max="1" step=".1" class="form-control"
-                   id="basic-url" aria-describedby="basic-addon3">
+            <label>characters to shift : </label>
+            <input [(ngModel)]="charactersToShow" type="number" class="form-control">
           </div>
           <div class="form-check">
             <label class="form-check-label">

@@ -18,7 +18,7 @@ export class ShiftCypherComponent {
 
   lettersData = [];
 
-  charactersToShowPercentage = 0.5;
+  charactersToShow = 50;
   preserveWhiteSpace = false;
 
   deviations = [];
@@ -65,14 +65,14 @@ export class ShiftCypherComponent {
 
   public generateDeviations (text){
     this.deviations = [];
-    var newText = text.substring(0,text.length * this.charactersToShowPercentage);
+
     for(var i = 0; i < 25; i++){
       var iteration = '';
-      for(var j = 0; j < newText.length; j++){
-        iteration += this.nextCharacterWrapAround(newText.charAt(j));
+      for(var j = 0; j < this.charactersToShow; j++){
+        iteration += this.nextCharacterWrapAround(text.charAt(j));
       }
       this.deviations.push({shift : i + 1, text : iteration});
-      newText = iteration;
+      text = iteration;
     }
   }
 

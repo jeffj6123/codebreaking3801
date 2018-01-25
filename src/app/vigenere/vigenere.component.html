@@ -10,23 +10,29 @@
 
           <button (click)="showKey =  !showKey" type="button" class=" text-center btn btn-outline-primary">{{showKey ? 'format' : 'key' }}</button>
 
-          <div class="row" *ngIf="showKey">
-            <div class="col-xs-12">
-              <label>key length</label>
+          <div class="row text-center" *ngIf="showKey">
+            <div class="col-xs-6">
+              <label class="inline-label text-center">key length </label>
+            </div>
+            <div class="col-xs-6">
               <input [(ngModel)]="keyLength" type="number"  class="form-control">
             </div>
+
             <div class="col-xs-6">
-              <label>min factor</label>
+              <label class="inline-label text-center">min factor </label>
+            </div>
+            <div class="col-xs-6">
               <input [(ngModel)]="minFactor" type="number"  class="form-control">
             </div>
+
             <div class="col-xs-6">
-              <label>max factor</label>
+              <label class="inline-label text-center">max factor </label>
+            </div>
+            <div class="col-xs-6">
               <input [(ngModel)]="maxFactor" type="number"  class="form-control">
             </div>
-            <div>
-              <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
 
-            </div>
+              <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
           </div>
 
           <div  *ngIf="!showKey">
@@ -47,7 +53,7 @@
         </div>
         <div class="col-sm-9">
           <h3>Replaced Text</h3>
-          <div style="font-family: 'Courier New', Courier, monospace;" [innerHTML]="highLightedText"></div>
+          <div [innerHTML]="highLightedText"></div>
         </div>
       </div>
     </div>
@@ -56,7 +62,7 @@
   <div class="card content">
     <div class="card-body">
       <div class="row">
-        <div *ngFor="let frequency of frequencies; let i = index" class="col-sm-5">
+        <div *ngFor="let frequency of frequencies; let i = index" class="col-sm-4">
         <span>
             <label>index : {{i + 1}}</label>
             <button (click)="shiftFrequnecy(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}</button>
@@ -90,7 +96,7 @@
           </tr>
           <tr *ngFor="let sequence of sequences[0].grams">
             <td>{{sequence.sequence}}</td>
-            <td>{{sequence.spacings.toString()}}</td>
+            <td class="overflowtext">({{sequence.spacings.length}}) {{sequence.spacings.toString()}}</td>
             <td *ngFor="let factor of factors" >{{ sequence.factors[factor.size] ? 'x' : ' '}} </td>
 
           </tr>
