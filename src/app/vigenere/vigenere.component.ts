@@ -18,9 +18,18 @@ export class VigenereComponent implements OnInit {
   highLightedText = '';
   keyLength = 3;
   factors = [];
-  maxFactor = 2;
-  minFactor = 4;
+  maxFactor = 20;
+  minFactor = 2;
   frequencies = [];
+  shiftIndexes = [];
+  sequences = [];
+  currentlyHighlightedIndex = 0;
+
+  showKey = true;
+
+  keySizeBlocks = true;
+  highlighting = true;
+
   constructor(private utils: UtilsService) { }
 
   ngOnInit() {
@@ -29,36 +38,103 @@ export class VigenereComponent implements OnInit {
   public analyize() {
     this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.text);
     this.highLightedText = this.replacedText;
-    this.generateRepeatedSequenceDistances(this.replacedText, [3]);
-    console.log("about to generate freqs")
-    this.generateNthFrequencies();
+    this.sequences = this.generateRepeatedSequenceDistances(this.replacedText, [3]);
+    this.frequencies = this.generateNthFrequencies(this.replacedText);
+    this.groupText();
+  }
+
+  public reformat() {
+    this.groupText();
   }
 
 
-  public generateNthFrequencies(){
+  groupText(){
+    var padding = 0;
+    var text = this.replacedText;
+    if(this.keySizeBlocks) {
+      text = text.match(new RegExp('.{1,' + this.keyLength + '}', 'g')).join(' ');
+      padding = 1;
+    }
+
+    if(this.highlighting) {
+      var newText = '';
+      for (var i = 0; i < text.length; i++) {
+        if (i % (this.keyLength + padding) != this.currentlyHighlightedIndex) {
+          newText += text.charAt(i);
+        } else {
+          newText += "<span class='highlight-text'>" + text.charAt(i) + "</span>";
+        }
+      }
+        text = newText
+      }
+    this.highLightedText = text;
+
+  }
+
+  shiftLetter(letter, shift){
+    letter = letter.toUpperCase();
+    var letterCode = letter.charCodeAt(0);
+    letterCode += shift;
+    letterCode -= 65;
+    if(letterCode < 0){
+      letterCode = 26 + letterCode;
+    }
+    letterCode = letterCode % 26;
+    letterCode += 65;
+    return String.fromCharCode(letterCode);
+  }
+
+  shiftText(shift, offset){
+
+    var splitS = this.replacedText.split('');
+
+    for (var i = offset; i < splitS.length-1; i+=this.keyLength) {
+      splitS[i] = this.shiftLetter(splitS[i], shift);
+    }
+    this.replacedText = splitS.join("");
+
+    this.groupText();
+  }
+
+  shiftFrequnecy(index, count) {
+    this.currentlyHighlightedIndex = index;
+    this.shiftText(-1 * count, index);
+    this.shiftIndexes[index].shift += count;
+    this.shiftIndexes[index].currentChar = this.shiftLetter(this.shiftIndexes[index].currentChar, count);
+    var arr = [].concat(this.frequencies[index]);
+    count -= arr.length * Math.floor(count / arr.length);
+    arr.push.apply(arr, arr.splice(0, count));
+
+    this.frequencies[index] = arr;
+  }
+
+  public generateNthFrequencies(text){
+    this.shiftIndexes = [];
     var frequencies = [];
+    var modStrings = [];
+    for(var x = 0; x < this.keyLength; x++){
+      modStrings.push('');
+      this.shiftIndexes.push({currentChar : 'A', shift : 0});
+    }
     var alphabet = this.utils.alphabet;
-    for(var i = 0; i < this.keyLength; i++){
-      console.log("generate analysis of offset" + i);
+    for(var i = 0; i < text.length; i++) {
+      var mod = i % this.keyLength;
+      modStrings[mod] += text.charAt(i);
+
+    }
+
+    for(var x = 0; x < modStrings.length; x++){
       var normalizedFrequencies = [];
-      var iSize = this.generateNthString(this.keyLength, i);
-      var letterFrequencyDict = this.utils.generateLetterCountDictionary(iSize);
+      var letterFrequencyDict = this.utils.generateLetterCountDictionary(modStrings[x]);
       var sum = this.utils.countDict(letterFrequencyDict);
       //generate letters data and normalized letter frequency dict and transformKeyList
       for(var i = 0; i < alphabet.length; i++){
-        normalizedFrequencies.push(letterFrequencyDict[i] / sum);
+        normalizedFrequencies.push(letterFrequencyDict[alphabet[i]] / sum);
       }
       frequencies.push(normalizedFrequencies)
     }
-    return frequencies;
-  }
 
-  public generateNthString(n, offset){
-    var nthString = '';
-    for(var i = offset; i < this.text.length; i += n){
-      nthString += this.text.charAt(i);
-    }
-    return nthString;
+    return frequencies;
   }
 
   generateRepeatedSequenceDistances(text, sizes: any[]){
@@ -83,7 +159,7 @@ export class VigenereComponent implements OnInit {
   }
 
     this.factors = [];
-    for(var c = this.minFactor; c < this.maxFactor; c++){
+    for(var c = this.minFactor; c <= this.maxFactor; c++){
       this.factors.push({size: c, count : 0})
     }
 
@@ -98,7 +174,7 @@ export class VigenereComponent implements OnInit {
             spacing.push(ref[y + 1] - ref[x])
           }
 
-          var factors = [];
+          var factors = {};
           for(var x = this.minFactor; x <= this.maxFactor; x++){
             var valid = false;
             for(var y = 0; y < spacing.length; y++){
@@ -108,19 +184,21 @@ export class VigenereComponent implements OnInit {
               }
             }
             if(valid){
-              factors.push(x);
-              this.factors[x - this.minFactor] += 1
+              factors[x] = true;
+              this.factors[x - this.minFactor].count += 1
             }
           }
-
           validRepeatedSequences.push({sequence: key, spacings : spacing, factors: factors})
         }
       }
+      validRepeatedSequences.sort(function (a,b) {
+        return a.spacings.length > b.spacings.length ? -1 : 1
+      });
+
       sequenceLengths[i].grams = validRepeatedSequences;
     }
-
-    console.log(sequenceLengths);
-  return sequenceLengths
+    console.log(validRepeatedSequences)
+    return sequenceLengths
 }
 
 }

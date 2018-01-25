@@ -22,6 +22,7 @@ export class LetterFrequencyComponent implements OnInit, OnChanges {
   barChartOptions:any = {
     scaleShowVerticalLines: false,
     responsive: true,
+    animation: false
   };
   barChartLabels:string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
   barChartType:string = 'bar';
@@ -35,15 +36,13 @@ export class LetterFrequencyComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.letterFrequencyDict = changes.letterFrequencyDict.currentValue;
-
-    this.letterFrequencyList = changes.letterFrequencyList.currentValue;
-
-    if(this.letterFrequencyDict){
+    if(changes.letterFrequencyDict){
+      this.letterFrequencyDict = changes.letterFrequencyDict.currentValue;
       this.generateGraphs();
-    }
 
-    if(this.letterFrequencyList){
+    }
+    if(changes.letterFrequencyList) {
+      this.letterFrequencyList = changes.letterFrequencyList.currentValue;
       var alphabet = this.utils.alphabet;
       var standardLetterFrequencyData = [];
 
@@ -54,6 +53,7 @@ export class LetterFrequencyComponent implements OnInit, OnChanges {
       this.barChartData = [{data:this.letterFrequencyList, label:'Letter Frequency'}, {data:standardLetterFrequencyData, label:'standard Letter Frequency'} ];
 
     }
+
   }
 
   generateGraphs(){

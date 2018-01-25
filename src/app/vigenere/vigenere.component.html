@@ -2,36 +2,102 @@
   <div class="card content">
     <div class="card-body">
       <div class=" row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <div class="form-group">
             <h2 class="text-center">Text</h2>
             <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
           </div>
-          <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+
+          <button (click)="showKey =  !showKey" type="button" class=" text-center btn btn-outline-primary">{{showKey ? 'format' : 'key' }}</button>
+
+          <div class="row" *ngIf="showKey">
+            <div class="col-xs-12">
+              <label>key length</label>
+              <input [(ngModel)]="keyLength" type="number"  class="form-control">
+            </div>
+            <div class="col-xs-6">
+              <label>min factor</label>
+              <input [(ngModel)]="minFactor" type="number"  class="form-control">
+            </div>
+            <div class="col-xs-6">
+              <label>max factor</label>
+              <input [(ngModel)]="maxFactor" type="number"  class="form-control">
+            </div>
+            <div>
+              <button (click)="analyize()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+
+            </div>
+          </div>
+
+          <div  *ngIf="!showKey">
+            <div>
+              <label>key size blocks</label>
+              <input [(ngModel)]="keySizeBlocks" type="checkbox"  class="form-control">
+            </div>
+            <div >
+              <label>highlight</label>
+              <input [(ngModel)]="highlighting" type="checkbox"  class="form-control">
+            </div>
+            <div>
+              <button (click)="reformat()" type="button" class=" text-center btn btn-outline-primary">reformat</button>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="col-sm-9">
+          <h3>Replaced Text</h3>
+          <div style="font-family: 'Courier New', Courier, monospace;" [innerHTML]="highLightedText"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!--<div class="card content">-->
-    <!--<div class="card-body">-->
-      <!--<div class="row">-->
-        <!--<div *ngFor="let frequency of frequencies" class="col-sm-4">-->
-          <!--<app-letter-frequency [letterFrequencyList]="frequency" ></app-letter-frequency>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-
-  <div class="card content" *ngIf="replacedText.length > 0">
+  <div class="card content">
     <div class="card-body">
-      <h3>Replaced Text</h3>
-      <div>
-        highlight
-        <input [(ngModel)]="highlightKeys" type="text">
-        <button (click)="highlightText()" type="button" class=" text-center btn btn-outline-primary">highlight</button>
+      <div class="row">
+        <div *ngFor="let frequency of frequencies; let i = index" class="col-sm-5">
+        <span>
+            <label>index : {{i + 1}}</label>
+            <button (click)="shiftFrequnecy(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}</button>
+            shift : {{ shiftIndexes[i].currentChar}}
+            <button (click)="shiftFrequnecy(i,-1)" type="button" class=" text-center btn btn-outline-primary">{{'>'}}</button>
+
+          </span>
+          <app-letter-frequency [letterFrequencyList]="frequency">
+          </app-letter-frequency>
+        </div>
       </div>
-      <div [innerHTML]="highLightedText"></div>
     </div>
   </div>
+
+  <div class="card content" *ngIf="sequences.length > 0">
+    <div class="card-body">
+      <div class="row">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>sequence</th>
+            <th>spacings </th>
+            <th *ngFor="let factor of factors; let i = index">{{factor.size}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>count</td>
+            <td>  </td>
+            <td *ngFor="let factor of factors; let i = index">{{factor.count}}</td>
+          </tr>
+          <tr *ngFor="let sequence of sequences[0].grams">
+            <td>{{sequence.sequence}}</td>
+            <td>{{sequence.spacings.toString()}}</td>
+            <td *ngFor="let factor of factors" >{{ sequence.factors[factor.size] ? 'x' : ' '}} </td>
+
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
