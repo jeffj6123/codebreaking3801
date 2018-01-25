@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="card content">
+  <div class="card content" *ngIf="frequencies.length > 0">
     <div class="card-body">
       <div class="row">
         <div *ngFor="let frequency of frequencies; let i = index" class="col-sm-4">
@@ -106,4 +106,22 @@
     </div>
   </div>
 
+  <div class="card content">
+    <div class="card-body">
+      Guide:
+      <br>
+      First enter your text into the text box.
+      <br>
+      Here you can change the key size to generate how the text should be analyzed for letter frequency. When you hit
+      the keys to shift the base of the alphabet it will show a highlight of that index in the text.
+      <br>
+      Min/max factors let you change the min/max sizes for the table of possible key sizes the table generates. Most likely you dont need to change these.
+      <br>
+      Hit format if you want to change the option for highlighting/block key size then reformat.
+      <br>
+      Hit analyze when you want it to parse the text into the multiple word frequencies, hit analyze whenever you change the key size.
+      <br>
+
+    </div>
+  </div>
 </div>
