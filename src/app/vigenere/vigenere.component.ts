@@ -6,6 +6,16 @@ import {UtilsService} from "../utils.service";
   templateUrl: './vigenere.component.html',
   styleUrls: ['./vigenere.component.css']
 })
+/**
+ * General explanation for how it takes the text input and makes its initial guess
+ * 1. text is taken and stored in text and a key length is taken as keyLength
+ * 2. text is stripped of white space and set to uppercase
+ * 3. text is stored in replacedText so all manipulations are stored there
+ * 4. replacedText is used to generate a list of frequencies for each index of the key size
+ * 5. list of frequencies is then used to compare to standard frequency and find which rotation of each frequency has the least
+ *    amount of deviation from the standard frequency.
+ * 6. shift the frequencies to the best fit as determined in step 5
+ */
 export class VigenereComponent implements OnInit {
   /*
    text: the text given by the user - avoid changing it
@@ -203,23 +213,30 @@ export class VigenereComponent implements OnInit {
   }
 
   /**
-   *
+   * Generates an array of objects {sequence: string, spacings: [number], factors: {number} }
+   * sizes is a list of numbers for what sizes of the sequences to look for, currently just size 3 is used
+   * spacings is the distance between every occurence so POW(number of spacings) for a formula for how many to expect
+   * factors is a dictionary of key pairs which are just meant for quick look up on if the sequence spacings has that as a factor
    * @param text
    * @param sizes
    * @returns {Array}
    */
   generateRepeatedSequenceDistances(text, sizes: any[]){
+    //make the base objects for the sequences
   var sequenceLengths = [];
   for(var i =0; i < sizes.length; i++){
     sequenceLengths.push({size: sizes[i], grams:{}})
   }
   var textLength = text.length;
 
+  //iterate through the text length and then iterate over each sequence length
   for(i = 0; i < textLength; i++){
     for(var j = 0; j < sequenceLengths.length; j++){
+      //basically while its not at the end of the string add it
       if(textLength - i - sequenceLengths[j].size >= 0){
         var g = text.substring(i, i + sequenceLengths[j].size);
 
+        //maintain a list of the locations at which it is seen
         if(sequenceLengths[j].grams[g]){
           sequenceLengths[j].grams[g].push(i)
         }else{
@@ -229,22 +246,26 @@ export class VigenereComponent implements OnInit {
     }
   }
 
+    //here is where the factors list is created
     this.factors = [];
     for(var c = this.minFactor; c <= this.maxFactor; c++){
       this.factors.push({size: c, count : 0})
     }
-
+    //iterate over each sequence size
     for(var i =0; i < sequenceLengths.length; i++){
       var validRepeatedSequences = [];
+      //for each sequence if it occurs more then once then generate POW set of differences
       for(var key in sequenceLengths[i].grams){
         var ref = sequenceLengths[i].grams[key];
         if(ref.length > 1){
           var spacing = [];
+          //calculate power set of differences
           for(var x = 0; x < ref.length; x++){
             for(var y = x; y < ref.length - 1; y++)
             spacing.push(ref[y + 1] - ref[x])
           }
 
+          //check if any spacings that was just generated has a number which is divisble by each factor
           var factors = {};
           for(var x = this.minFactor; x <= this.maxFactor; x++){
             var valid = false;
@@ -262,43 +283,62 @@ export class VigenereComponent implements OnInit {
           validRepeatedSequences.push({sequence: key, spacings : spacing, factors: factors})
         }
       }
+      //sort the sequences so that the table displays them by how spacings it has first
       validRepeatedSequences.sort(function (a,b) {
         return a.spacings.length > b.spacings.length ? -1 : 1
       });
 
       sequenceLengths[i].grams = validRepeatedSequences;
     }
-    console.log(validRepeatedSequences)
-
     return sequenceLengths
   }
 
-
+  /**
+   * helper function for rotating arrays
+   * @param arr
+   * @param count
+   * @returns {any}
+   */
   arrayRotate(arr, count) {
     count -= arr.length * Math.floor(count / arr.length)
     arr.push.apply(arr, arr.splice(0, count))
     return arr
   }
 
+  /**
+   * neat function which actually does the guessing and is very simple.
+   * take in a frequency list and a reference frequency list(should be standard frequency)
+   * @param frequency
+   * @param reference
+   * @returns {number}
+   */
   autoFit(frequency, reference){
+    //initialize bookkeeping to some large value so it will get properly set
     var lowestIndex = 0;
     var indexValue = 1000;
 
+    //make new reference
     var arr = [].concat(frequency);
 
+    /*
+    Now the logic is as follows:
+    1. Compare each column and take absolute difference and make a running sum
+    2. rotate the frequency and repeat step 1 until having shifted to the length of the frequency
+      2.1 if the sum is less then the smallest sum found so far, keep track of it
+    3. return the lowest sum found
+     */
     for(var j = 0; j < frequency.length; j++){
       var value = 0;
       for(var i = 0; i < frequency.length; i++){
         value += Math.abs(arr[i] - reference[i]);
-        //console.log(arr[i].toString() + ' ' + reference[i] +  ' ' + value)
       }
       if(value < indexValue){
         lowestIndex = j;
         indexValue = value
       }
-
       arr = this.arrayRotate(arr, 1)
     }
+
     console.log( String.fromCharCode(65 + lowestIndex));
     return lowestIndex;
   }
