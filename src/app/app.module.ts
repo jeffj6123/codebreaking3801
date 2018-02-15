@@ -18,12 +18,15 @@ import { NgramsComponent } from './ngrams/ngrams.component';
 import { TextAnalysisComponent } from './text-analysis/text-analysis.component';
 import { NgraphGraphComponent } from './ngraph-graph/ngraph-graph.component';
 import { VigenereComponent } from './vigenere/vigenere.component';
+import { PlayfairComponent } from './playfair/playfair.component';
 
 const appRoutes: Routes = [
 
   {path: 'shiftcipher', component: ShiftCypherComponent},
   {path: 'textanalysis', component: TextAnalysisComponent},
   {path: 'vigenerecracker', component: VigenereComponent},
+  {path: 'playfair', component: PlayfairComponent},
+
   {path: '', component: LandingPageComponent},
   {path: '**', component: LandingPageComponent}
 
@@ -38,7 +41,8 @@ const appRoutes: Routes = [
     NgramsComponent,
     TextAnalysisComponent,
     NgraphGraphComponent,
-    VigenereComponent
+    VigenereComponent,
+    PlayfairComponent
   ],
   imports: [
     BrowserModule,
