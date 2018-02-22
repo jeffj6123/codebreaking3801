@@ -196,17 +196,17 @@ export class VigenereComponent implements OnInit {
 
     //comment out if you dont want it to attempt to auto solve it for you.
         //get a list of standard letter frequency
-        var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
-        var alphabet = this.utils.alphabet;
-        var standardLetterFrequencyData = [];
-        for(var i = 0; i < alphabet.length; i++){
-          standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
-        }
-        //go through and let auto fit make its best guess and then shift that index of the key to its guess
-        for(var i = 0; i < frequencies.length; i++){
-          var shift = this.autoFit(frequencies[i],standardLetterFrequencyData);
-          this.shiftFrequnecy(i, shift )
-        }
+        // var standardLetterFrequencyDict = this.utils.standardLetterFrequencyDict;
+        // var alphabet = this.utils.alphabet;
+        // var standardLetterFrequencyData = [];
+        // for(var i = 0; i < alphabet.length; i++){
+        //   standardLetterFrequencyData.push(standardLetterFrequencyDict[alphabet[i]]);
+        // }
+        // //go through and let auto fit make its best guess and then shift that index of the key to its guess
+        // for(var i = 0; i < frequencies.length; i++){
+        //   var shift = this.autoFit(frequencies[i],standardLetterFrequencyData);
+        //   this.shiftFrequnecy(i, shift )
+        // }
         //end auto solve
 
     return frequencies;
