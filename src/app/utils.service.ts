@@ -155,6 +155,17 @@ Z,.00074`;
     return nGrams
   }
 
+  public sortNgramDictToList(ngramDict){
+
+    var ngrams = [];
+    for(let key in ngramDict){
+      ngrams.push({name : key, count: ngramDict[key]})
+    }
+    ngrams.sort(function(a,b){
+      return a.count > b.count ? -1 : 1
+    })
+    return ngrams
+  }
   /**
    * stripes whitespace and new line characters
    * @param text
@@ -162,6 +173,17 @@ Z,.00074`;
    */
   public stripWhiteSpaceAndFormatting(text){
     return text.replace(/\W+/g, "").trim();
+  }
+
+  public factors(num) {
+    var allFactors = [];
+
+    for (var i = 0; i <= num; i++) {
+      if (num % i === 0) {
+        allFactors.push(i);
+      }
+    }
+    return allFactors
   }
 
 }

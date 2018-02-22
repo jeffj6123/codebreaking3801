@@ -9,6 +9,8 @@ export class PlayfairComponent implements OnInit {
 
   text = '';
 
+  highLightedText = '';
+
   grid = this.generateGrid();
 
   row = false;
@@ -19,7 +21,49 @@ export class PlayfairComponent implements OnInit {
   ngOnInit() {
   }
 
+  chunk(str, length) {
+      return str.match(new RegExp('.{1,' + length + '}', 'g'));
+  }
+
+  decipherTuple(quickLookDictionary, text){
+    var left = text.substr(0);
+    var right = text.substr(1);
+
+    var leftCoord = { x : -1, y : -1};
+    var rightCoord = {x : -1, y : -1};
+
+
+    if(quickLookDictionary[left]){
+
+    }
+    if(quickLookDictionary[right]){
+
+    }
+
+    //same row
+    if(leftCoord.x > -1 && rightCoord.x > -1){
+
+    }
+    //same column
+
+    //square
+    return '--'
+  }
+
   replace(){
+    var replaceKey = {};
+    for(var i = 0; i < this.grid.length; i++){
+      for(var j = 0; j < this.grid[i].length; j++){
+        if(this.grid[i][j] != '-'){
+          replaceKey[ this.grid[i][j] ] = {x : i, y : j};
+        }
+      }
+    }
+
+    var chunks = this.chunk(this.text, 2);
+    for(var i = 0; i < chunks.length; i++){
+      this.decipherTuple(replaceKey, chunks[i]);
+    }
 
   }
 

@@ -15,10 +15,17 @@ export class TranspositionComponent implements OnInit {
   matrix = [];
   vowels = [];
   vowelStandardDeviation = 0;
+  averageVowels = 0;
 
   columnIndexs = [];
 
   swap = -1;
+
+  digraphs = [];
+  trigraphs = [];
+
+  canLock = false;
+  lockStates = [];
 
   constructor(private utils: UtilsService) {
   }
@@ -28,36 +35,23 @@ export class TranspositionComponent implements OnInit {
 
   analyze() {
     this.highLightedText = this.utils.stripWhiteSpaceAndFormatting(this.text).toUpperCase();
-    console.log(this.highLightedText.length)
-    console.log(this.factors(this.highLightedText.length))
-    this.allFactors = this.factors(this.highLightedText.length)
+    this.allFactors = this.utils.factors(this.highLightedText.length)
 
   }
 
   changeGridSize(size) {
-    console.log(this.splitTextToColumns(this.highLightedText, size))
-    console.log(this.splitTextToRows(this.highLightedText, size))
     this.matrix = this.splitTextToRows(this.highLightedText, size)
     var vowelData = this.generateVowelCounts(this.matrix);
     this.vowelStandardDeviation = vowelData.stdDev
     this.vowels = vowelData.improvedVowelCountData;
-
+    this.generateNewText();
     this.columnIndexs = [];
     for (var i = 1; i <= size; i++) {
       this.columnIndexs.push(i)
     }
   }
 
-  factors(num) {
-    var allFactors = [];
 
-    for (var i = 0; i <= num; i++) {
-      if (num % i === 0) {
-        allFactors.push(i);
-      }
-    }
-    return allFactors
-  }
 
   splitTextToColumns(text, size) {
     var length = text.length;
@@ -105,7 +99,7 @@ export class TranspositionComponent implements OnInit {
       total += c
     }
 
-    var average = total / vowelCounts.length;
+    this.averageVowels = (total / vowelCounts.length).toPrecision(3);
 
     var improvedVowelCountData = [];
     for (var i = 0; i < vowelCounts.length; i++) {
@@ -115,8 +109,7 @@ export class TranspositionComponent implements OnInit {
     }
 
 
-    var stdDev = this.standardDeviation(vowelCounts);
-    console.log(stdDev)
+    var stdDev = this.standardDeviation(vowelCounts).toPrecision(4);
     return {'improvedVowelCountData': improvedVowelCountData, 'stdDev': stdDev};
   }
 
@@ -172,6 +165,8 @@ export class TranspositionComponent implements OnInit {
         this.swapColumn(this.matrix[i], this.swap, index);
       }
       this.swapColumn(this.columnIndexs, this.swap, index);
+      this.swapColumn(this.lockStates, this.swap, index);
+
       this.generateNewText();
       this.swap = -1;
     } else {
@@ -182,10 +177,22 @@ export class TranspositionComponent implements OnInit {
   generateNewText(){
     var newText = '';
     for(var i = 0; i < this.matrix.length; i++){
-      newText += this.matrix[i].join();
+      newText += this.matrix[i].join('');
     }
 
     this.highLightedText = newText;
+    var ngrams = this.utils.generateNGramDictionary(this.highLightedText, [2,3])
+    this.digraphs = this.utils.sortNgramDictToList(ngrams[0].grams).slice(0,15);
+    this.trigraphs = this.utils.sortNgramDictToList(ngrams[1].grams).slice(0,15);
+
   }
 
+  getLockState(){
+    return this.lockStates[this.swap];
+  }
+
+  ChangeColumnLockState(){
+    this.lockStates[this.swap] = !this.lockStates[this.swap];
+    this.swap = -1;
+  }
 }

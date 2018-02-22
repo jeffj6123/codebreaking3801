@@ -9,57 +9,106 @@
             <button (click)="analyze()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
 
           </div>
-
-
         </div>
         <div class="col-sm-9">
-          <h3>Replaced Text</h3>
-          <div [innerHTML]="highLightedText"></div>
+          <h5>Possible table sizes : </h5>
+          <div class="row" style="padding-bottom: 15px;">
+            <div class="col-xs-1" *ngFor="let factor of allFactors">
+              <button (click)="changeGridSize(factor)" type="button" class=" text-center btn btn-outline-primary">{{factor}}</button>
+            </div>
+          </div>
+          <div *ngIf="matrix.length > 0">
+            <h5>table controls : </h5>
+            <div class="row">
+              <button (click)="shift(1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'<'}}</button>
+
+              <div *ngFor="let column of columnIndexs; let i = index" class="col-xs-1">
+                <button [ngStyle]="{'background-color':swap ===  i ? 'gray' : '', 'border-color': lockStates[i] ? 'red' : ''}"
+                        (click)="selectToShift(i)" type="button" class=" text-center btn btn-outline-primary">{{column}}</button>
+
+              </div>
+              <button (click)="shift(-1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'>'}}</button>
+              <button *ngIf="swap > -1" (click)="ChangeColumnLockState()" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{getLockState() ? 'unlock' : 'lock'}}</button>
+
+            </div>
+            <div class="row">
+              <div class="col-xs-12" style="width: 100%;">
+                <div class="replaced-text" style="max-height: 250px; !important; resize: both;">
+                  <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                      <th class="text-center" *ngFor="let column of columnIndexs">{{column}}</th>
+                      <th>
+                        vowel counts
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let row of matrix;let i = index" class="text-center">
+                      <td *ngFor="let index of row">
+                        {{ index}}
+                      </td>
+                      <td>
+                        {{vowels[i].count}}({{vowels[i].percentage}}%)
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
         </div>
       </div>
     </div>
   </div>
-  <div class="card content">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-xs-1" *ngFor="let factor of allFactors">
-          <button (click)="changeGridSize(factor)" type="button" class=" text-center btn btn-outline-primary">{{factor}}</button>
-        </div>
-      </div>
-      <div *ngIf="matrix.length > 0">
-        <div class="row">
-          <button (click)="shift(1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'<'}}</button>
-
-          <div *ngFor="let column of columnIndexs; let i = index" class="col-xs-1">
-            <button [ngStyle]="{'background-color':swap ===  i ? 'gray' : '' }"
-              (click)="selectToShift(i)" type="button" class=" text-center btn btn-outline-primary">{{column}}</button>
-
-          </div>
-          <button (click)="shift(-1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'>'}}</button>
-        </div>
-        <div class="row">
+  <div class="card content" *ngIf="matrix.length > 0">
+    <div class="card-body row">
           <div class="col-sm-6">
-            <div class="replaced-text">
-              <table class="table table-bordered" style="max-height: 600px;">
-                <thead>
-                <tr>
-                  <th *ngFor="let column of columnIndexs">{{column}}</th>
-                  <th>
-                    vowel counts
-                  </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let row of matrix;let i = index" class="text-center">
-                  <td *ngFor="let index of row">
-                    {{ index}}
-                  </td>
-                  <td>
-                    {{vowels[i].count}}({{vowels[i].percentage}}%)
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+            <h3>Replaced Text</h3>
+            <div [innerHTML]="highLightedText"></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="col-xs-6">
+              average vowels per line : {{averageVowels}}
+            </div>
+            <div class="col-xs-6">
+              line vowel std dev : {{vowelStandardDeviation}}
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <h4 class="text-center">Top digraphs counts</h4>
+                <table class="table table-bordered">
+                  <thead>
+                  <tr>
+                    <th>digraph</th>
+                    <th>count</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let gram of digraphs">
+                    <td>{{ gram.name }}</td>
+                    <td>{{gram.count}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-sm-6">
+                <h4 class="text-center">Top trigraphs counts</h4>
+                <table class="table table-bordered">
+                  <thead>
+                  <tr>
+                    <th>digraph</th>
+                    <th>count</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let gram of trigraphs">
+                    <td>{{ gram.name }}</td>
+                    <td>{{gram.count}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
