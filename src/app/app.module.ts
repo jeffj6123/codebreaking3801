@@ -19,6 +19,7 @@ import { TextAnalysisComponent } from './text-analysis/text-analysis.component';
 import { NgraphGraphComponent } from './ngraph-graph/ngraph-graph.component';
 import { VigenereComponent } from './vigenere/vigenere.component';
 import { PlayfairComponent } from './playfair/playfair.component';
+import { TranspositionComponent } from './transposition/transposition.component';
 
 const appRoutes: Routes = [
 
@@ -26,6 +27,7 @@ const appRoutes: Routes = [
   {path: 'textanalysis', component: TextAnalysisComponent},
   {path: 'vigenerecracker', component: VigenereComponent},
   {path: 'playfair', component: PlayfairComponent},
+  {path: 'transposition', component: TranspositionComponent},
 
   {path: '', component: LandingPageComponent},
   {path: '**', component: LandingPageComponent}
@@ -42,7 +44,8 @@ const appRoutes: Routes = [
     TextAnalysisComponent,
     NgraphGraphComponent,
     VigenereComponent,
-    PlayfairComponent
+    PlayfairComponent,
+    TranspositionComponent
   ],
   imports: [
     BrowserModule,

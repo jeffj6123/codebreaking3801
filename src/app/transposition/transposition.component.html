@@ -1,0 +1,69 @@
+<div class="container no-margin-check times">
+  <div class="card content">
+    <div class="card-body">
+      <div class=" row">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <h2 class="text-center">Text</h2>
+            <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+            <button (click)="analyze()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+
+          </div>
+
+
+        </div>
+        <div class="col-sm-9">
+          <h3>Replaced Text</h3>
+          <div [innerHTML]="highLightedText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card content">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xs-1" *ngFor="let factor of allFactors">
+          <button (click)="changeGridSize(factor)" type="button" class=" text-center btn btn-outline-primary">{{factor}}</button>
+        </div>
+      </div>
+      <div *ngIf="matrix.length > 0">
+        <div class="row">
+          <button (click)="shift(1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'<'}}</button>
+
+          <div *ngFor="let column of columnIndexs; let i = index" class="col-xs-1">
+            <button [ngStyle]="{'background-color':swap ===  i ? 'gray' : '' }"
+              (click)="selectToShift(i)" type="button" class=" text-center btn btn-outline-primary">{{column}}</button>
+
+          </div>
+          <button (click)="shift(-1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'>'}}</button>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="replaced-text">
+              <table class="table table-bordered" style="max-height: 600px;">
+                <thead>
+                <tr>
+                  <th *ngFor="let column of columnIndexs">{{column}}</th>
+                  <th>
+                    vowel counts
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let row of matrix;let i = index" class="text-center">
+                  <td *ngFor="let index of row">
+                    {{ index}}
+                  </td>
+                  <td>
+                    {{vowels[i].count}}({{vowels[i].percentage}}%)
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
