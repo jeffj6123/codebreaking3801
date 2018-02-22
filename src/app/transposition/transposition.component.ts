@@ -14,8 +14,8 @@ export class TranspositionComponent implements OnInit {
 
   matrix = [];
   vowels = [];
-  vowelStandardDeviation = 0;
-  averageVowels = 0;
+  vowelStandardDeviation = '';
+  averageVowels = '';
 
   columnIndexs = [];
 
@@ -36,13 +36,15 @@ export class TranspositionComponent implements OnInit {
   analyze() {
     this.highLightedText = this.utils.stripWhiteSpaceAndFormatting(this.text).toUpperCase();
     this.allFactors = this.utils.factors(this.highLightedText.length)
+    this.matrix = [];
 
   }
 
   changeGridSize(size) {
-    this.matrix = this.splitTextToRows(this.highLightedText, size)
+    this.text = this.utils.stripWhiteSpaceAndFormatting(this.text);
+    this.matrix = this.splitTextToRows(this.text, size);
     var vowelData = this.generateVowelCounts(this.matrix);
-    this.vowelStandardDeviation = vowelData.stdDev
+    this.vowelStandardDeviation = vowelData.stdDev;
     this.vowels = vowelData.improvedVowelCountData;
     this.generateNewText();
     this.columnIndexs = [];
@@ -151,6 +153,7 @@ export class TranspositionComponent implements OnInit {
   }
 
   shift(shiftAmount) {
+    var movableColumns = [];
     this.arrayRotate(this.columnIndexs, shiftAmount);
     for (var i = 0; i < this.matrix.length; i++) {
       this.arrayRotate(this.matrix[i], shiftAmount);
