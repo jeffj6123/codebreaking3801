@@ -13,13 +13,21 @@
 
         </div>
         <div class="col-sm-9">
-          <h3>Replaced Text</h3>
-          <div class="replaced-text" [innerHTML]="highLightedText"></div>
+          <h3>{{ showDecipheredText ? 'Deciphered Text' : 'Replaced Text' }}
+          <span>
+            <button (click)="changeShowDecipheredText()" type="button" class=" text-center btn btn-outline-primary">
+              {{ showDecipheredText ? 'Show Text replace' : 'Show Deciphered Text' }}
+            </button>
+          </span></h3>
+          <div *ngIf="showDecipheredText" class="replaced-text">
+            {{decipheredText}}
+          </div>
+          <div *ngIf="!showDecipheredText" class="replaced-text" [innerHTML]="highLightedText"></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="card content">
+  <div class="card content" *ngIf="grid.length > 0">
     <div class="card-body">
       <div class="row">
         <div  class="col-sm-4">
@@ -45,8 +53,9 @@
               <td>
               <button (click)="shiftRow(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}</button>
               </td>
-              <td *ngFor="let cell of row; let j = index" ><input class="ng-pristine ng-valid ng-touched" [(ngModel)]="grid[i][j]" type="text" minlength="1" maxlength="1"  style="width: 30px;"
-              (change)="replace()"></td>
+              <td *ngFor="let cell of row; let j = index" >
+                <input class="ng-pristine ng-valid ng-touched" [(ngModel)]="grid[i][j]" type="text" [attr.id]="i + '  ' + j"
+                       minlength="1" maxlength="1" size="1" (keydown)="replace(i,j)" onfocus="console.log(this.value) this.value ="></td>
               <button (click)="shiftRow(i,-1)" type="button" class=" text-center btn btn-outline-primary">{{'>'}}</button>
             </tr>
             <tr>
@@ -59,6 +68,13 @@
             </tr>
             </tbody>
           </table>
+        </div>
+        <div class="col-sm-8">
+          <button (click)="fullShiftUp()" type="button" class=" text-center btn btn-outline-primary">shift up</button>
+          <button (click)="fullShiftDown()" type="button" class=" text-center btn btn-outline-primary">shift down</button>
+          <button (click)="fullRotate(1)" type="button" class=" text-center btn btn-outline-primary">shift right</button>
+          <button (click)="fullRotate(-1)" type="button" class=" text-center btn btn-outline-primary">shift left</button>
+
         </div>
       </div>
     </div>

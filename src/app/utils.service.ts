@@ -186,4 +186,7 @@ Z,.00074`;
     return allFactors
   }
 
+  isLetter(c) {
+  return c.toLowerCase() != c.toUpperCase();
+  }
 }
