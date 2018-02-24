@@ -1,0 +1,7 @@
+.playfair-block {
+  text-align: center;
+  display: inline-block;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+}

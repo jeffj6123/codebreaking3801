@@ -6,13 +6,15 @@
           <div class="form-group">
             <h2 class="text-center">Text</h2>
             <textarea [(ngModel)]="text" class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+            <button (click)="analyze()" type="button" class=" text-center btn btn-outline-primary">Analyze</button>
+
           </div>
 
 
         </div>
         <div class="col-sm-9">
           <h3>Replaced Text</h3>
-          <div [innerHTML]="highLightedText"></div>
+          <div class="replaced-text" [innerHTML]="highLightedText"></div>
         </div>
       </div>
     </div>
@@ -43,7 +45,8 @@
               <td>
               <button (click)="shiftRow(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}</button>
               </td>
-              <td *ngFor="let cell of row; let j = index" ><input [(ngModel)]="grid[i][j]" type="text" minlength="1" maxlength="1" size="1" style="width: 30px;"></td>
+              <td *ngFor="let cell of row; let j = index" ><input class="ng-pristine ng-valid ng-touched" [(ngModel)]="grid[i][j]" type="text" minlength="1" maxlength="1"  style="width: 30px;"
+              (change)="replace()"></td>
               <button (click)="shiftRow(i,-1)" type="button" class=" text-center btn btn-outline-primary">{{'>'}}</button>
             </tr>
             <tr>

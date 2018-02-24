@@ -34,6 +34,7 @@ export class TranspositionComponent implements OnInit {
   }
 
   analyze() {
+    this.text = this.text.toUpperCase();
     this.highLightedText = this.utils.stripWhiteSpaceAndFormatting(this.text).toUpperCase();
     this.allFactors = this.utils.factors(this.highLightedText.length)
     this.matrix = [];
@@ -41,6 +42,8 @@ export class TranspositionComponent implements OnInit {
   }
 
   changeGridSize(size) {
+    this.text = this.text.toUpperCase();
+
     this.text = this.utils.stripWhiteSpaceAndFormatting(this.text);
     this.matrix = this.splitTextToRows(this.text, size);
     var vowelData = this.generateVowelCounts(this.matrix);
