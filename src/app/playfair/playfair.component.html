@@ -70,11 +70,16 @@
           </table>
         </div>
         <div class="col-sm-8">
-          <button (click)="fullShiftUp()" type="button" class=" text-center btn btn-outline-primary">shift up</button>
-          <button (click)="fullShiftDown()" type="button" class=" text-center btn btn-outline-primary">shift down</button>
-          <button (click)="fullRotate(1)" type="button" class=" text-center btn btn-outline-primary">shift right</button>
-          <button (click)="fullRotate(-1)" type="button" class=" text-center btn btn-outline-primary">shift left</button>
-
+          <div>
+            <button (click)="fullShiftUp()" type="button" class=" text-center btn btn-outline-primary">shift up</button>
+            <button (click)="fullShiftDown()" type="button" class=" text-center btn btn-outline-primary">shift down</button>
+            <button (click)="fullRotate(1)" type="button" class=" text-center btn btn-outline-primary">shift left</button>
+            <button (click)="fullRotate(-1)" type="button" class=" text-center btn btn-outline-primary">shift right</button>
+          </div>
+          <div>
+            <input (change)="importKey(keyImport.value, true)" #keyImport />
+            <button (click)="importKey(keyImport.value, true)" type="button" class=" text-center btn btn-outline-primary">import key</button>
+          </div>
         </div>
       </div>
     </div>

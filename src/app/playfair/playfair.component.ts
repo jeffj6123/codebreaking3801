@@ -108,13 +108,14 @@ export class PlayfairComponent implements OnInit {
     }
 
     var validChar = this.utils.isLetter(changedChar);
-    console.log(x + " " + y)
-    console.log(this.grid)
-    console.log(changedChar)
-      console.log(validChar)
+
     var replaceKey = {};
     for(var i = 0; i < this.grid.length; i++){
       for(var j = 0; j < this.grid[i].length; j++){
+        if(this.grid[j][i].toUpperCase() === changedChar.toUpperCase() && (j !== x  || i !== y)){
+          this.grid[j][i] = '-';
+        }
+
         if(this.grid[j][i] != '-'){
           replaceKey[ this.grid[j][i].toUpperCase() ] = {x : i, y : j};
         }
@@ -248,6 +249,29 @@ export class PlayfairComponent implements OnInit {
     this.grid[index1] = this.grid[index2];
     this.grid[index2] = hold;
 
+    this.replace();
+
+  }
+
+  importKey(key, fill){
+    var importedKey = this.utils.uniqueString(key.toUpperCase());
+    var splitKey = importedKey.split('');
+
+    var alphabet = 'a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z'.toUpperCase().split(',');
+    if(fill){
+      for(var i = 0; i < alphabet.length; i++){
+        if(!splitKey.includes(alphabet[i])){
+            splitKey.push(alphabet[i]);
+        }
+      }
+    }
+    this.grid = this.generateGrid();
+
+    for(var i = 0; i < 5; i++){
+      for(var j = 0; j < 5; j++){
+        this.grid[i][j] = splitKey[i * 5 + j];
+      }
+    }
     this.replace();
 
   }
