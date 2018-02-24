@@ -154,7 +154,7 @@ export class PlayfairComponent implements OnInit {
     for(var i = 0; i < 5; i++){
       var row = [];
       for(var j = 0; j < 5; j++){
-        row.push('-');
+        row.push('');
         x++;
       }
       hold.push(row)
