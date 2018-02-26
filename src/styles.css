@@ -87,3 +87,7 @@ textarea {
   top: 5px;
   width: 70px;
 }
+
+.selected-text{
+  color: red;
+}

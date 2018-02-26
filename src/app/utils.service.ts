@@ -186,4 +186,17 @@ Z,.00074`;
     return allFactors
   }
 
+  isLetter(c) {
+  return c.toLowerCase() != c.toUpperCase();
+  }
+
+  uniqueString(str) {
+    var result = '';
+    for (var i = 0; i < str.length; i++) {
+      if (result.indexOf(str[i]) < 0) {
+        result += str[i];
+      }
+    }
+    return result;
+  }
 }

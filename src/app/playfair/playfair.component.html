@@ -13,26 +13,36 @@
 
         </div>
         <div class="col-sm-9">
-          <h3>Replaced Text</h3>
-          <div class="replaced-text" [innerHTML]="highLightedText"></div>
+          <h3>{{ showDecipheredText ? 'Deciphered Text' : 'Replaced Text' }}
+            <span>
+            <button (click)="changeShowDecipheredText()" type="button" class=" text-center btn btn-outline-primary">
+              {{ showDecipheredText ? 'Show Text replace' : 'Show Deciphered Text' }}
+            </button>
+          </span></h3>
+          <div *ngIf="showDecipheredText" class="replaced-text">
+            {{decipheredText}}
+          </div>
+          <div *ngIf="!showDecipheredText" class="replaced-text" [innerHTML]="highLightedText"></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="card content">
+  <div class="card content" *ngIf="grid.length > 0">
     <div class="card-body">
       <div class="row">
-        <div  class="col-sm-4">
+        <div class="col-sm-4">
           <table class="table table-bordered text-center">
             <thead>
             <tr>
               <th></th>
               <th></th>
               <th *ngFor="let row of grid; let i = index">
-                <button (click)="selectToShift(i,false)" type="button" class=" text-center btn btn-outline-primary">s</button>
+                <button (click)="selectToShift(i,false)" type="button" class=" text-center btn btn-outline-primary">s
+                </button>
 
-                <button (click)="shiftColumnUp(i)" type="button" class=" text-center btn btn-outline-primary">{{'^'}}</button>
-                </th>
+                <button (click)="shiftColumnUp(i)" type="button" class=" text-center btn btn-outline-primary">{{'^'}}
+                </button>
+              </th>
               <th></th>
             </tr>
             </thead>
@@ -40,25 +50,116 @@
 
             <tr *ngFor="let row of grid; let i = index">
               <td>
-                <button (click)="selectToShift(i,true)" type="button" class=" text-center btn btn-outline-primary">s</button>
+                <button (click)="selectToShift(i,true)" type="button" class=" text-center btn btn-outline-primary">s
+                </button>
               </td>
               <td>
-              <button (click)="shiftRow(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}</button>
+                <button (click)="shiftRow(i,1)" type="button" class=" text-center btn btn-outline-primary">{{'<'}}
+                </button>
               </td>
-              <td *ngFor="let cell of row; let j = index" ><input class="ng-pristine ng-valid ng-touched" [(ngModel)]="grid[i][j]" type="text" minlength="1" maxlength="1"  style="width: 30px;"
-              (change)="replace()"></td>
-              <button (click)="shiftRow(i,-1)" type="button" class=" text-center btn btn-outline-primary">{{'>'}}</button>
+              <td *ngFor="let cell of row; let j = index">
+                <input class="ng-pristine ng-valid ng-touched" [(ngModel)]="grid[i][j]" type="text"
+                       [attr.id]="i + '  ' + j"
+                       minlength="1" maxlength="1" size="1" (keydown)="replace(i,j)"></td>
+              <button (click)="shiftRow(i,-1)" type="button" class=" text-center btn btn-outline-primary">{{'>'}}
+              </button>
             </tr>
             <tr>
               <td></td>
               <td></td>
               <td *ngFor="let row of grid; let i = index">
-                <button (click)="shiftColumnDown(i)" type="button" class=" text-center btn btn-outline-primary">{{'v'}}</button>
+                <button (click)="shiftColumnDown(i)" type="button" class=" text-center btn btn-outline-primary">
+                  {{'v'}}
+                </button>
               </td>
               <td></td>
             </tr>
             </tbody>
           </table>
+        </div>
+        <div class="col-sm-8">
+          <div class="col-xs-12">
+            <h5>Shift key</h5>
+            <button (click)="fullShiftUp()" type="button" class=" text-center btn btn-outline-primary">shift up</button>
+            <button (click)="fullShiftDown()" type="button" class=" text-center btn btn-outline-primary">shift down
+            </button>
+            <button (click)="fullRotate(1)" type="button" class=" text-center btn btn-outline-primary">shift left
+            </button>
+            <button (click)="fullRotate(-1)" type="button" class=" text-center btn btn-outline-primary">shift right
+            </button>
+          </div>
+          <div class="col-sm-12" style="padding-top: 15px;">
+            <h5>Import key</h5>
+            <input type="text" maxlength="25" #keyImport/>
+            <button (click)="importKey(keyImport.value, true)" type="button"
+                    class=" text-center btn btn-outline-primary">Import
+            </button>
+          </div>
+          <div class="col-sm-12">
+            <h5>Save state</h5>
+            <div>
+              <label> Name : </label>
+              <input type="text" [(ngModel)]="newStateName"/>
+            </div>
+            <div>
+              <label> Description : </label>
+              <textarea [(ngModel)]="newStateDescription" class="form-control" rows="3" cols="10"></textarea>
+            </div>
+            <div>
+              <button (click)="saveState()" type="button" class=" text-center btn btn-outline-primary">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card content" *ngIf="statesList.length > 0">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-4" *ngFor="let state of statesList; let stateIndex = index">
+          <h4>{{state.name}}</h4>
+          <p>{{state.description}}</p>
+          <table class="table table-bordered text-center">
+            <tbody>
+            <tr *ngFor="let row of state.grid; let i = index">
+              <td *ngFor="let cell of row; let j = index"> {{state.grid[i][j]}}</td>
+            </tr>
+            </tbody>
+          </table>
+          <button (click)="restoreState(stateIndex)" type="button" class=" text-center btn btn-outline-success">
+            Restore
+          </button>
+          <button (click)="deleteState(stateIndex)" type="button"
+                  class=" text-center btn btn-danger btn-outline-danger">Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card content">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3>FAQ</h3>
+          <p>
+            Start by entering the cipher text in the text field and hitting analyze.
+            <br>
+            You are able to change between block deciphered text and a break down of how text was replaced.
+            <br>
+            After having hit analyze you have the options of shifting columns and rows using the '<' keys.
+            <br>
+            You can swap rows by hitting the S key on two columns/rows.
+            <br>
+            You can move the entire grid using the shift down/left/up/right keys to better align your key.
+            <br>
+            You can import a key which will use the i/j replacement assumption.
+            <br>
+            You can save a state which is a current grid layout with a description/name and upon saving it you can set the current
+            grid back to it at any point by hitting restore.
+
+          </p>
         </div>
       </div>
     </div>

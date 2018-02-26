@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {UtilsService} from "../utils.service";
 import { ApplicationRef } from '@angular/core'
-import { ViewEncapsulation } from '@angular/core'
+import { ViewEncapsulation, ChangeDetectorRef  } from '@angular/core'
 
 @Component({
   selector: 'app-playfair',
@@ -16,15 +16,25 @@ export class PlayfairComponent implements OnInit {
   textCopy = '';
   highLightedText = '';
 
-  grid = this.generateGrid();
+  grid = [];
 
   row = false;
   swap = -1;
 
-  constructor(private utils: UtilsService, private applicationRef : ApplicationRef) {}
+  showDecipheredText = false;
+  decipheredText = '';
+
+  statesList = [];
+  newStateName = '';
+  newStateDescription = '';
+
+  constructor(private utils: UtilsService, private applicationRef : ApplicationRef, private cdr:ChangeDetectorRef) {}
   ngOnInit() {
   }
 
+  changeShowDecipheredText(){
+    this.showDecipheredText = ! this.showDecipheredText;
+  }
 
   analyze(){
     this.textCopy = this.utils.stripWhiteSpaceAndFormatting(this.text);
@@ -55,14 +65,11 @@ export class PlayfairComponent implements OnInit {
     }else{
       return '--'
     }
-    console.log(text)
-    console.log(leftCoord)
-    console.log(rightCoord)
+
     //same row
     if(leftCoord.y === rightCoord.y){
       var leftPos = leftCoord.x === 0 ? 4 :  leftCoord.x - 1 ;
       var rightPos = rightCoord.x === 0 ? 4 :  rightCoord.x - 1 ;
-      console.log('new coords' + leftPos + ' ' + rightPos)
       var newLeft = grid[leftCoord.y][leftPos];
       var newRight = grid[leftCoord.y][rightPos];
 
@@ -75,7 +82,6 @@ export class PlayfairComponent implements OnInit {
     else if(leftCoord.x === rightCoord.x){
       var leftPos = leftCoord.y === 0 ? 4 :  leftCoord.y - 1;
       var rightPos = rightCoord.y === 0 ? 4 :  rightCoord.y - 1;
-      console.log("new coords" );
       var newLeft = grid[leftPos][leftCoord.x];
       var newRight = grid[rightPos][leftCoord.x];
 
@@ -87,8 +93,8 @@ export class PlayfairComponent implements OnInit {
     //square
 
     else{
-      var corner1 = grid[leftCoord.x][rightCoord.y];
-      var corner2 = grid[rightCoord.x][leftCoord.y];
+      var corner1 = grid[leftCoord.y][rightCoord.x];
+      var corner2 = grid[rightCoord.y][leftCoord.x];
 
       var front = corner1.length === 0 ? '-' : corner1;
       var back = corner2.length === 0 ? '-' : corner2;
@@ -97,27 +103,55 @@ export class PlayfairComponent implements OnInit {
     }
   }
 
-  replace(){
-    console.log(this.grid)
+  replace(x = -1,y = -1){
+    setTimeout( () => {
+
+    var changedChar = '  ';
+    if(x >= 0 && y >= 0){
+      changedChar = this.grid[x][y];
+    }
+
+    var validChar = this.utils.isLetter(changedChar);
+
     var replaceKey = {};
     for(var i = 0; i < this.grid.length; i++){
       for(var j = 0; j < this.grid[i].length; j++){
+        if(this.grid[j][i].toUpperCase() === changedChar.toUpperCase() && (j !== x  || i !== y)){
+          this.grid[j][i] = '-';
+        }
+
         if(this.grid[j][i] != '-'){
           replaceKey[ this.grid[j][i].toUpperCase() ] = {x : i, y : j};
         }
+        document.getElementById(i + '  ' + j)['value'] = this.grid[i][j];
       }
     }
 
-    var replacedText = '';
-    var chunks = this.chunk(this.textCopy, 2);
-    for(var i = 0; i < chunks.length; i++){
-      var decipheredChunk = this.decipherTuple(this.grid, replaceKey, chunks[i]);
-      replacedText += "<div class='playfair-block'>" +  chunks[i] + "<div>" + decipheredChunk + "</div></div>"
-    }
-    this.highLightedText = replacedText;
-    console.log(replacedText)
-    //this.applicationRef.tick();
+      var decipheredText = ''
+      var replacedText = '';
+      var chunks = this.chunk(this.textCopy, 2);
+      for (var i = 0; i < chunks.length; i++) {
+        var decipheredChunk = this.decipherTuple(this.grid, replaceKey, chunks[i]).toUpperCase();
+        decipheredText += decipheredChunk
+
+        if (validChar &&
+          (decipheredChunk.charAt(0) === changedChar.toUpperCase() ||
+            decipheredChunk.charAt(1) === changedChar.toUpperCase() ||
+          chunks[i].charAt(0) === changedChar.toUpperCase() ||
+          chunks[i].charAt(1) === changedChar.toUpperCase() ) &&
+          (this.utils.isLetter(decipheredChunk.charAt(0)) || this.utils.isLetter(decipheredChunk.charAt(1)))
+          ) {
+          decipheredChunk = "<span class='selected-text'>" + decipheredChunk + "</span>"
+          }
+        replacedText += "<div class='playfair-block'>" + chunks[i] + "<div>" + decipheredChunk + "</div></div>"
+      }
+      this.decipheredText = decipheredText
+      this.highLightedText = replacedText;
+    }, 0);
+
   }
+
+
 
   generateGrid(){
     var hold = [];
@@ -125,7 +159,7 @@ export class PlayfairComponent implements OnInit {
     for(var i = 0; i < 5; i++){
       var row = [];
       for(var j = 0; j < 5; j++){
-        row.push('-');
+        row.push('');
         x++;
       }
       hold.push(row)
@@ -153,15 +187,35 @@ export class PlayfairComponent implements OnInit {
 
   }
 
-
   arrayRotate(arr, count) {
     count -= arr.length * Math.floor(count / arr.length);
     arr.push.apply(arr, arr.splice(0, count));
     return arr
   }
 
+  fullRotate(shiftAmount){
+    for(var i = 0; i < this.grid.length; i ++){
+      this.shiftRow(i, shiftAmount);
+    }
+    this.replace();
+  }
+
   shiftRow(row, shitAmount){
     this.arrayRotate(this.grid[row], shitAmount);
+
+    this.replace();
+  }
+
+  fullShiftUp(){
+    for(var i = 0; i < this.grid.length; i++){
+      this.shiftColumnUp(i)
+    }
+  }
+
+  fullShiftDown(){
+    for(var i = 0; i < this.grid.length; i++){
+      this.shiftColumnDown(i)
+    }
   }
 
   shiftColumnUp(index){
@@ -170,6 +224,8 @@ export class PlayfairComponent implements OnInit {
       this.grid[i][index] = this.grid[i + 1][index]
     }
     this.grid[this.grid.length - 1][index] = first;
+    this.replace();
+
   }
 
   shiftColumnDown(index){
@@ -178,6 +234,8 @@ export class PlayfairComponent implements OnInit {
       this.grid[i][index] = this.grid[i - 1][index]
     }
     this.grid[0][index] = first;
+    this.replace();
+
   }
 
   swapColumn(index1,index2){
@@ -186,12 +244,72 @@ export class PlayfairComponent implements OnInit {
       this.grid[i][index1] = this.grid[i][index2];
       this.grid[i][index2] = hold;
     }
+    this.replace();
+
   }
 
   swapRow(index1,index2){
     var hold =  this.grid[index1];
     this.grid[index1] = this.grid[index2];
     this.grid[index2] = hold;
+
+    this.replace();
+
   }
 
+  importKey(key, fill){
+    var importedKey = this.utils.uniqueString(key.toUpperCase());
+    var splitKey = importedKey.split('');
+
+    var alphabet = 'a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z'.toUpperCase().split(',');
+    if(fill){
+      for(var i = 0; i < alphabet.length; i++){
+        if(!splitKey.includes(alphabet[i])){
+            splitKey.push(alphabet[i]);
+        }
+      }
+    }
+    this.grid = this.generateGrid();
+
+    for(var i = 0; i < 5; i++){
+      for(var j = 0; j < 5; j++){
+        this.grid[i][j] = splitKey[i * 5 + j];
+      }
+    }
+    this.replace();
+
+  }
+
+  saveState(){
+    var newGrid = this.generateGrid();
+    for(var i = 0; i < 5; i++){
+      for(var j = 0; j < 5; j++){
+        if(!this.grid[i][j].length || this.grid[i][j].length === 0){
+          newGrid[i][j] = '-'
+        }else{
+          newGrid[i][j] = this.grid[i][j];
+        }
+      }
+    }
+
+    this.statesList.push({
+      name : this.newStateName,
+      description : this.newStateDescription ,
+      grid : newGrid
+    });
+
+    this.newStateName = '';
+    this.newStateDescription = '';
+  }
+
+  restoreState(stateIndex){
+    this.grid = this.statesList[stateIndex].grid;
+    this.replace();
+
+  }
+
+  deleteState(stateIndex){
+    this.statesList.splice(stateIndex, 1);
+
+  }
 }
