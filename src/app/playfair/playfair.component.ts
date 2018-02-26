@@ -24,6 +24,10 @@ export class PlayfairComponent implements OnInit {
   showDecipheredText = false;
   decipheredText = '';
 
+  statesList = [];
+  newStateName = '';
+  newStateDescription = '';
+
   constructor(private utils: UtilsService, private applicationRef : ApplicationRef, private cdr:ChangeDetectorRef) {}
   ngOnInit() {
   }
@@ -276,4 +280,36 @@ export class PlayfairComponent implements OnInit {
 
   }
 
+  saveState(){
+    var newGrid = this.generateGrid();
+    for(var i = 0; i < 5; i++){
+      for(var j = 0; j < 5; j++){
+        if(!this.grid[i][j].length || this.grid[i][j].length === 0){
+          newGrid[i][j] = '-'
+        }else{
+          newGrid[i][j] = this.grid[i][j];
+        }
+      }
+    }
+
+    this.statesList.push({
+      name : this.newStateName,
+      description : this.newStateDescription ,
+      grid : newGrid
+    });
+
+    this.newStateName = '';
+    this.newStateDescription = '';
+  }
+
+  restoreState(stateIndex){
+    this.grid = this.statesList[stateIndex].grid;
+    this.replace();
+
+  }
+
+  deleteState(stateIndex){
+    this.statesList.splice(stateIndex, 1);
+
+  }
 }
