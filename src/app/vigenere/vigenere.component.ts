@@ -58,8 +58,16 @@ export class VigenereComponent implements OnInit {
     this.replacedText = this.utils.stripWhiteSpaceAndFormatting(this.text);
     this.highLightedText = this.replacedText;
     this.sequences = this.generateRepeatedSequenceDistances(this.replacedText, [3]);
-    this.frequencies = this.generateNthFrequencies(this.replacedText);
+    //this.frequencies = this.generateNthFrequencies(this.replacedText);
     this.groupText();
+  }
+
+  public setKeySize(size){
+    this.keyLength = size;
+    this.frequencies = this.generateNthFrequencies(this.replacedText);
+    this.highLightedText = this.replacedText;
+    this.groupText();
+
   }
 
   public reformat() {

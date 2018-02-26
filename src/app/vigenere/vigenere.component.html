@@ -12,13 +12,6 @@
 
           <div class="row text-center" *ngIf="showKey">
             <div class="col-xs-6">
-              <label class="inline-label text-center">key length </label>
-            </div>
-            <div class="col-xs-6">
-              <input [(ngModel)]="keyLength" type="number"  class="form-control">
-            </div>
-
-            <div class="col-xs-6">
               <label class="inline-label text-center">min factor </label>
             </div>
             <div class="col-xs-6">
@@ -85,7 +78,9 @@
           <tr>
             <th>sequence</th>
             <th>spacings </th>
-            <th *ngFor="let factor of factors; let i = index">{{factor.size}}</th>
+            <th *ngFor="let factor of factors; let i = index">
+              <button (click)="setKeySize(factor.size)" type="button" class=" text-center btn btn-outline-primary">{{factor.size}}</button>
+              </th>
           </tr>
           </thead>
           <tbody>
