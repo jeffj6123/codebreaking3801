@@ -36,9 +36,15 @@ export class TextAnalysisComponent implements OnInit {
    */
   showReplaceKey = true;
 
+  showTable = true;
   constructor(private utils: UtilsService) {
   }
   ngOnInit() {
+  }
+
+
+  public changeTableState() {
+    this.showTable = ! this.showTable;
   }
 
 
