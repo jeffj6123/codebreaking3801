@@ -112,7 +112,7 @@
     </div>
   </div>
 
-  <div class="card content" *ngIf="nGraphs[0].entries.length > 0">
+  <div class="card content" *ngIf="lettersData.length > 0 && nGraphs[0].entries.length > 0">
     <h3>Letter matrix
       <button  (click)="changeTableState()" type="button" class=" text-center btn btn-outline-primary">
         {{ showTable ? 'Hide' : 'Show' }}</button>
