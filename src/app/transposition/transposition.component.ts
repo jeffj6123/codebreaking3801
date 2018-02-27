@@ -36,7 +36,8 @@ export class TranspositionComponent implements OnInit {
   analyze() {
     this.text = this.text.toUpperCase();
     this.highLightedText = this.utils.stripWhiteSpaceAndFormatting(this.text).toUpperCase();
-    this.allFactors = this.utils.factors(this.highLightedText.length)
+    this.allFactors = this.utils.factors(this.highLightedText.length);
+
     this.matrix = [];
 
   }

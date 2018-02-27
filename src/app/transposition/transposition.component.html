@@ -21,24 +21,21 @@
             <h5>table controls : </h5>
             <div class="row">
               <button (click)="shift(1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'<'}}</button>
-
-              <div *ngFor="let column of columnIndexs; let i = index" class="col-xs-1">
-                <button [ngStyle]="{'background-color':swap ===  i ? 'gray' : '', 'border-color': lockStates[i] ? 'red' : ''}"
-                        (click)="selectToShift(i)" type="button" class=" text-center btn btn-outline-primary">{{column}}</button>
-
-              </div>
               <button (click)="shift(-1)" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{'>'}}</button>
-              <!--<button *ngIf="swap > -1" (click)="ChangeColumnLockState()" type="button" class="col-xs-1 text-center btn btn-outline-primary">{{getLockState() ? 'unlock' : 'lock'}}</button>-->
 
             </div>
             <div class="row">
               <div class="col-xs-12" style="width: 100%;">
                 <div class="replaced-text" style="max-height: 250px; !important; resize: both;">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered" style="table-layout: fixed">
                     <thead>
                     <tr>
-                      <th class="text-center" *ngFor="let column of columnIndexs">{{column}}</th>
-                      <th>
+                      <th class="text-center" *ngFor="let column of columnIndexs; let i = index">
+                        <button style="width: 100%; padding: 0px;"
+                          [ngStyle]="{'background-color':swap ===  i ? 'gray' : '', 'border-color': lockStates[i] ? 'red' : ''}"
+                                (click)="selectToShift(i)" type="button" class=" text-center btn btn-outline-primary">{{column}}</button>
+                      </th>
+                      <th style="width: 110px;">
                         vowel counts
                       </th>
                     </tr>
